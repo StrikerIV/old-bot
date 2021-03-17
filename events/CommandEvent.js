@@ -60,6 +60,13 @@ exports.CommandEvent = async (client, message) => {
 
 
     let arguments = await ParseArguments(info, message, args)
+    if (arguments.error) {
+        if (arguments.type === "GuildMember") {
+            return message.reply({ embed: BotError(message.client, `The supplied \`GuildMember\` is \`null\`. Check the supplied member and try again.`) })
+        } else if(arguments.type === "Time") {
+            return message.reply({ embed: BotError(message.client, `\`Time\` was supplied, but no units were.`) })
+        }
+    }
 
     command.run(client, message, arguments);
 
