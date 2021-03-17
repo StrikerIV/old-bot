@@ -1,4 +1,9 @@
+const mysql = require("mysql")
+const database = require("../utils/database.json")
+
 exports.ready = async (client) => {
+
+    client.pool = mysql.createPool(database)
 
     client.guilds.fetch('671577661952360459').then(function (guild) {
         let emojis = guild.emojis.cache
