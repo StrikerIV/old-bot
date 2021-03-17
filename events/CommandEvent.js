@@ -1,5 +1,5 @@
 const config = require("../utils/config.json");
-const { BotError, ArgumentCheck, PermissionError, PermissionCheck } = require("../structures/StructuresManager");
+const { BotError, ArgumentCheck, PermissionError, ParseArguments, PermissionCheck } = require("../structures/StructuresManager");
 const { cooldowns } = require("../index");
 const HelpEmbed = require("../structures/HelpEmbed");
 
@@ -51,14 +51,16 @@ exports.CommandEvent = async (client, message) => {
     }
 
     let argumentCheck = await ArgumentCheck(info, args)
-    if(argumentCheck === "HelpEmbed") return message.reply(HelpEmbed(message, info))
-    if(argumentCheck.error) {
-        console.log(argumentCheck)
-        if(argumentCheck.type === "missingArgument") {
-            return message.reply(BotError(client, `Missing argument of type \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position}\`.`))
+    if (argumentCheck === "HelpEmbed") return message.reply(HelpEmbed(message, info))
+    if (argumentCheck.error) {
+        if (argumentCheck.type === "missingArgument") {
+            return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position + 1}\`.`))
         }
     }
 
-    command.run(client, message, args);
+
+    let arguments = await ParseArguments(info, message, args)
+
+    command.run(client, message, arguments);
 
 };

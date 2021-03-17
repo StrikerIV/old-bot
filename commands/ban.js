@@ -1,5 +1,6 @@
 exports.run = (client, message, args) => {
 
+    //console.log(args)
     message.channel.send("ban baby")
 
 }
@@ -12,19 +13,19 @@ exports.info = {
         {
             position: 0,
             argument: "<user>",
-            type: ["GuildMember"],
+            type: "GuildMember",
             required: true
         },
         {
             position: 1,
             argument: "<time>",
-            type: ["Time"],
+            type: "Time",
             required: false
         },
         {
             position: 1,
             argument: "<reason>",
-            type: ["String"],
+            type: "Reason",
             required: false
         }
     ],
