@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/StrikerIV/bot#readme",
   "dependencies": {
+    "axios": "^0.21.1",
     "discord.js": "github:discordjs/discord.js",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
