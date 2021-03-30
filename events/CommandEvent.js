@@ -1,7 +1,6 @@
 const config = require("../utils/config.json");
-const { BotError, ArgumentCheck, PermissionError, ParseArguments, PermissionCheck } = require("../structures/StructuresManager");
+const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck } = require("../structures/StructuresManager");
 const { cooldowns } = require("../index");
-const HelpEmbed = require("../structures/HelpEmbed");
 
 exports.CommandEvent = async (client, message) => {
 
@@ -37,6 +36,9 @@ exports.CommandEvent = async (client, message) => {
         setTimeout(() => commandCooldowns.delete(message.author.id), cooldownTime)
 
     }
+
+    let commandEnabled = await EnabledCheck(message, command)
+    if(!commandEnabled) return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
 
     if (info.usageAreas) {
         let channelType = message.channel.type

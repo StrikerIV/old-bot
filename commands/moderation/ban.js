@@ -1,4 +1,4 @@
-let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery } = require("../structures/StructuresManager")
+let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery } = require("../../structures/StructuresManager")
 
 exports.run = async (client, message, args) => {
 
@@ -18,10 +18,10 @@ exports.run = async (client, message, args) => {
 
     //return message.reply({ embed: BotSuccess(client, `${memberToBan} has been banned${time ? ` for ${time.data.time} ${time.data.units}.`:`.`} ${reason ? `\n\nReason: \`${reason.data}\``: ``}`)})
 
-    if(time) {
-        let updateQuery = await DatabaseQuery(client, "SELECT * FROM guilds", [])
-        console.log(updateQuery)
-    }
+    // if(time) {
+    //     let updateQuery = await DatabaseQuery(client, "SELECT * FROM guilds", [])
+    //     console.log(updateQuery)
+    // }
 
     // memberToBan.ban()
     //     .then((member) => {
@@ -36,6 +36,7 @@ exports.run = async (client, message, args) => {
 exports.info = {
     usage: null,
     command: "ban",
+    category: "moderation",
     description: "Bans a member from a guild.",
     arguments: [
         {

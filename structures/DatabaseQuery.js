@@ -1,6 +1,5 @@
 const config = require('../utils/config.json');
 const axios = require('axios');
-const qs = require('qs');
 
 function ResultObject(error, data, fields) {
     return PermissionCheckResult = {
