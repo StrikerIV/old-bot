@@ -28,7 +28,7 @@ exports.CommandEvent = async (client, message) => {
             const expirationTime = commandCooldowns.get(message.author.id) + cooldownTime;
             if (now < expirationTime) {
                 const timeLeft = Math.floor((expirationTime - now) / 1000);
-                return message.reply({ embed: BotError(client, `This command is on cooldown for ${timeLeft} more ${timeLeft != 0 && timeLeft <= 1 ? "second" : "seconds"}.`) });
+                return message.reply({ embed: BotError(client, `This command is on cooldown for \`${timeLeft}\` more ${timeLeft != 0 && timeLeft <= 1 ? "second" : "seconds"}.`) });
             }
         }
 

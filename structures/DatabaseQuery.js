@@ -30,9 +30,10 @@ module.exports = (query, parameters) => {
                 return result(ResultObject(true, null, null))
         }
 
-        const params = new URLSearchParams()
-        params.append('query', query)
-        params.append('params', parameters[0] ? parameters : '[]')
+        const params = new URLSearchParams({
+            'query': query,
+            'params': parameters[0] ? `[${parameters}]` : '[]'
+        })
 
         const RequestConfig = {
             method: HTTPMethod,
@@ -50,7 +51,7 @@ module.exports = (query, parameters) => {
                 return result(ResultObject(data.error, data.data, data.fields))
             })
             .catch(function (error) {
-                return result(ResultObject(true, null, null))
+                return result(ResultObject({ "status": `${error.response.status}: ${error.response.statusText}` }, null, null))
             });
 
 
