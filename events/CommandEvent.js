@@ -4,13 +4,19 @@ const { cooldowns } = require("../index");
 
 exports.CommandEvent = async (client, message) => {
 
-    if (message.author.bot) return;
-    if (message.content.indexOf(config.prefix) !== 0) return;
+    if (message.author.bot) {
+        return;
+    }
+    if (message.content.indexOf(config.prefix) !== 0) {
+        return;
+    }
 
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     const commandName = args.shift().toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(commandName));
-    if (!command) return;
+    if (!command) {
+        return;
+    }
 
     const info = command.info;
 
@@ -38,22 +44,30 @@ exports.CommandEvent = async (client, message) => {
     }
 
     let commandEnabled = await EnabledCheck(message, command)
-    if(!commandEnabled) return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
+    if(!commandEnabled) {
+        return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
+    }
 
     if (info.usageAreas) {
         let channelType = message.channel.type
-        if (!info.usageAreas.includes(channelType)) return message.reply({ embed: BotError(client, `This command cannot be run in ${channelType} type channels.`), allowedMentions: { repliedUser: false } })
+        if (!info.usageAreas.includes(channelType)) {
+            return message.reply({ embed: BotError(client, `This command cannot be run in ${channelType} type channels.`), allowedMentions: { repliedUser: false } })
+        }
     }
 
     if (!info.developer) {
         //eval permissions
         let permissionObject = await PermissionCheck(message, info.permissions[0], info.permissions[1]);
 
-        if (permissionObject.error) return message.reply({ embed: PermissionError(client, permissionObject.permission, permissionObject.bot), allowedMentions: { repliedUser: false } })
+        if (permissionObject.error) {
+            return message.reply({ embed: PermissionError(client, permissionObject.permission, permissionObject.bot), allowedMentions: { repliedUser: false } })
+        }
     }
 
     let argumentCheck = await ArgumentCheck(info, args)
-    if (argumentCheck === "HelpEmbed") return message.reply(HelpEmbed(message, info))
+    if (argumentCheck === "HelpEmbed") {
+        return message.reply(HelpEmbed(message, info))
+    }
     if (argumentCheck.error) {
         if (argumentCheck.type === "missingArgument") {
             return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position + 1}\`.`))

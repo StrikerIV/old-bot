@@ -31,6 +31,8 @@ async function initalizeBot() {
 
     client.once('ready', () => { loadedEvents.ready(client) })
 
+    client.on('guildCreate', (guild) => { loadedEvents.GuildCreate(guild) })
+
     client.login(config.token)
 
 }

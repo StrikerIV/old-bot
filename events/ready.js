@@ -1,6 +1,11 @@
-const mysql = require("mysql")
+//const UpdateGuildMutes = require("./UpdateGuildMutes");
+const UpdateGuildBans = require("./UpdateGuildBans");
+const mysql = require("mysql");
+const { updateLocale } = require("moment");
 
 exports.ready = async (client) => {
+
+    UpdateGuildBans(client)
 
     client.guilds.fetch('671577661952360459').then(function (guild) {
         let emojis = guild.emojis.cache
