@@ -1,6 +1,13 @@
 const config = require('../utils/config.json');
 const axios = require('axios');
 
+function ErrorObject(error) {
+    return {
+        error: error.response.status ? `${error.response.status}: ${error.response.statusText}` : error.data.message,
+        code: error.response.status ? null : error.data.code
+    }
+}
+
 function ResultObject(error, data, fields) {
     return PermissionCheckResult = {
         error: error,
@@ -32,8 +39,11 @@ module.exports = (query, parameters) => {
 
         const params = new URLSearchParams({
             'query': query,
-            'params': parameters[0] ? `[${parameters}]` : '[]'
         })
+
+        for await ([index, param] of parameters.entries()) {
+            params.append('params[]', param)
+        }
 
         const RequestConfig = {
             method: HTTPMethod,
@@ -51,7 +61,7 @@ module.exports = (query, parameters) => {
                 return result(ResultObject(data.error, data.data, data.fields))
             })
             .catch(function (error) {
-                return result(ResultObject({ "status": `${error.response.status}: ${error.response.statusText}` }, null, null))
+                return result(ResultObject(ErrorObject(error), null, null))
             });
 
 
