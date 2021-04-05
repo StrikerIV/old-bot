@@ -1,35 +1,24 @@
-let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery } = require("../../structures/StructuresManager")
+let { BotError, BotSuccess, DatabaseError, DatabaseQuery, ReactionChoice, EnableDisableCategory } = require("../../structures/StructuresManager")
+
+// return message.reply({ embed: SubArgumentError(client, subArgument``) })
+// function SubArgumentError(client, subArgument) {
+//     switch (subArgument) {
+//         case "moderation":
+//             return 
+//     }
+// }
 
 exports.run = async (client, message, args) => {
 
-    let memberToBan = args.find(argument => argument.type === "GuildMember").data
-    let time = args.find(argument => argument.type === "Time")
-    let reason = args.find(argument => argument.type === "Reason")
+    console.log(args)
 
-    let canBan = await CheckHeirachy(message, memberToBan)
+    let subCommand = args.find(argument => argument.type === "SubCommand").data
+    // let subArgument = args.find(argument => argument.type === "SubArgument")
+    // let secondSubArgument = args.find(argument => argument.type === "SubArgument")
 
-    if (!canBan.above) {
-        if (canBan.type === "bot") {
-            return message.reply({ embed: BotError(client, `The bot cannot ban this user. Check the heirachy positions.`) })
-        } else {
-            return message.reply({ embed: BotError(client, `You cannot ban this user, as they are above you in the heirachy.`) })
-        }
-    } 
-
-    //return message.reply({ embed: BotSuccess(client, `${memberToBan} has been banned${time ? ` for ${time.data.time} ${time.data.units}.`:`.`} ${reason ? `\n\nReason: \`${reason.data}\``: ``}`)})
-
-    // if(time) {
-    //     let updateQuery = await DatabaseQuery(client, "SELECT * FROM guilds", [])
-    //     console.log(updateQuery)
-    // }
-
-    // memberToBan.ban()
-    //     .then((member) => {
-    //         return message.reply({ embed: BotError(client, `${memberToBan} has been banned ${time ? `for ${time.data}`: `.` }`)})
-    //     })
-    //     .catch(any => {
-    //         return message.reply({ embed: BotError(client, `Something went wrong with banning this user.`) })
-    //     })
+    if (subCommand === "moderation") {
+        await EnableDisableCategory(client, message, args)
+    }
 
 }
 
@@ -37,8 +26,27 @@ exports.info = {
     usage: null,
     command: "settings",
     category: "administration",
-    description: "Settings for the bot that configure the bot.",
-    arguments: [],
+    description: "Command to edit the settings for your guild.",
+    arguments: [
+        {
+            position: 0,
+            argument: "<subcmd>",
+            type: "SubCommand",
+            required: true
+        },
+        {
+            position: 1,
+            argument: "<subarg>",
+            type: "SubArgument",
+            required: false
+        },
+        {
+            position: 1,
+            argument: "<subarg>",
+            type: "SubArgument",
+            required: false
+        }
+    ],
     permissions: [
         ["ADMINISTRATOR"],
         []

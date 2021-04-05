@@ -44,7 +44,7 @@ exports.CommandEvent = async (client, message) => {
     }
 
     let commandEnabled = await EnabledCheck(message, command)
-    if(!commandEnabled) {
+    if (!commandEnabled) {
         return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
     }
 
@@ -77,9 +77,11 @@ exports.CommandEvent = async (client, message) => {
 
     let arguments = await ParseArguments(info, message, args)
     if (arguments.error) {
-        if (arguments.type === "GuildMember") {
-            return message.reply({ embed: BotError(message.client, `The supplied \`GuildMember\` is \`null\`. Check the supplied member and try again.`) })
-        } else if(arguments.type === "Time") {
+        if (arguments.type === "User") {
+            return message.reply({ embed: BotError(message.client, `The supplied \`User\` is \`invalid\`.`) })
+        } if (arguments.type === "GuildMember") {
+            return message.reply({ embed: BotError(message.client, `The supplied \`GuildMember\` is \`invalid\`.`) })
+        } else if (arguments.type === "Time") {
             return message.reply({ embed: BotError(message.client, `\`Time\` was supplied, but no units were.`) })
         }
     }

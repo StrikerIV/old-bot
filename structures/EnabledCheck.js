@@ -3,19 +3,21 @@ const DatabaseQuery = require("./DatabaseQuery")
 module.exports = async (message, command) => {
 
     let categoryToCheck = null;
-    let category = command.category;
+    let category = command.info.category;
 
     switch (category) {
         case "moderation":
             categoryToCheck = "moderation_enabled";
             break;
+        default:
+            return true;
     }
+    console.log(categoryToCheck)
 
-    let response = await DatabaseQuery(`SELECT moderation_enabled FROM guilds WHERE guild_id = ?`, [message.guild.id])
-
+    let response = await DatabaseQuery(`SELECT ${categoryToCheck} FROM guilds WHERE guild_id = ? LIMIT 1`, [message.guild.id])
     let data = response.data[0]
-    
-    if(data[Object.keys(data)[0]] === 1) {
+
+    if (data[Object.keys(data)[0]] === 1) {
         // category is enabled
         return true;
     } else {

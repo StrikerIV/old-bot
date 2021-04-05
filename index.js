@@ -8,7 +8,7 @@ const cooldowns = new Map()
 
 async function initalizeBot() {
 
-    const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'GUILD_MESSAGES'] });
+    const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] });
 
     const loadedEvents = await loadEvents()
 

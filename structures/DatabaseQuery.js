@@ -27,7 +27,7 @@ module.exports = (query, parameters) => {
             case "SELECT":
                 HTTPMethod = "GET";
                 break;
-            case "INSERT" || "UPDATE":
+            case "INSERT": case "UPDATE":
                 HTTPMethod = "POST";
                 break;
             case "DELETE":

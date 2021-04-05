@@ -29,14 +29,36 @@ module.exports = async (info, message, args) => {
         let commandArgument = arguments[index]
         let type = commandArgument.type
 
-        let hasMember = false
-
-        if (type === "GuildMember") {
+        if (type === "SubCommand") {
+            // convert to string to prevent errors
+            try {
+                let subCommandString = String(argument)
+                ArgumentArray.push(CreateArgumentObject(false, commandArgument, subCommandString))
+            } catch {
+                ArgumentArray.push(CreateArgumentObject(true, commandArgument, null))
+            }
+        } if (type === "SubArgument") {
+            // convert to string to prevent errors
+            try {
+                let subArgumentString = String(argument)
+                ArgumentArray.push(CreateArgumentObject(false, commandArgument, subArgumentString))
+            } catch {
+                ArgumentArray.push(CreateArgumentObject(true, commandArgument, null))
+            }
+        } else if (type === "User") {
+            // fetch user to check if valid
+            try {
+                let userString = argument.replace(/[<>@!]/gm, "")
+                let user = await message.member.client.users.fetch(userString)
+                ArgumentArray.push(CreateArgumentObject(false, commandArgument, user))
+            } catch {
+                ArgumentArray.push(CreateArgumentObject(true, commandArgument, null))
+            }
+        } if (type === "GuildMember") {
             //fetch and add guildmember
             try {
                 let memberString = argument.replace(/[<>@!]/gm, "")
                 let member = await message.guild.members.fetch(memberString)
-                hasMember = true
                 ArgumentArray.push(CreateArgumentObject(false, commandArgument, member))
             } catch {
                 ArgumentArray.push(CreateArgumentObject(true, commandArgument, null))
