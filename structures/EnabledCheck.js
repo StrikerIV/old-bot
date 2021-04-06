@@ -12,7 +12,6 @@ module.exports = async (message, command) => {
         default:
             return true;
     }
-    console.log(categoryToCheck)
 
     let response = await DatabaseQuery(`SELECT ${categoryToCheck} FROM guilds WHERE guild_id = ? LIMIT 1`, [message.guild.id])
     let data = response.data[0]

@@ -1,4 +1,4 @@
-let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery } = require("../../structures/StructuresManager")
+let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery, DatabaseError } = require("../../structures/StructuresManager")
 const moment = require("moment")
 
 exports.run = async (client, message, args) => {
@@ -7,10 +7,9 @@ exports.run = async (client, message, args) => {
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
 
-    let isBanned = await DatabaseQuery("SELECT * FROM guilds_bans WHERE user_id = ? AND guild_id = ?", [memberToBan.id, memberToBan.guild.id])
+    let isBanned = await DatabaseQuery("SELECT * FROM guilds_bans WHERE user_id = ? AND guild_id = ? LIMIT 1", [memberToBan.id, memberToBan.guild.id])
     if (isBanned.error) {
-        console.log(isBanned)
-        return message.reply({ embed: BotError(client, `Woops! Looks like we have an issue with our database currently.`) })
+        return message.reply({ embed: DatabaseError(client) })
     }
 
     let isBannedData = isBanned.data
@@ -29,20 +28,15 @@ exports.run = async (client, message, args) => {
     }
 
     if (time) {
-        console.log(moment().valueOf() + time.data.milliseconds)
-        console.log(time.data.milliseconds)
-        console.log([message.guild.id, memberToBan.id, reason ? `"${reason.data}"` : null, time ? moment().valueOf() + time.data.milliseconds : null])
-        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason, time) VALUES(?, ?, ?, ?)", [message.guild.id, memberToBan.id, reason ? `"${reason.data}"` : null, time ? moment().valueOf() + time.data.milliseconds : null])
-        console.log(updateQuery)
+        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason, time) VALUES(?, ?, ?, ?)", [message.guild.id, memberToBan.id, reason ? `${reason.data}` : null, time ? moment().valueOf() + time.data.milliseconds : null])
         if (updateQuery.error) {
-            console.log(updateQuery)
-            return message.reply({ embed: BotError(client, `Woops! Looks like we have an issue with our database currently.`) })
+            return message.reply({ embed: DatabaseError(client) })
         }
     }
 
-    memberToBan.ban()
+    memberToBan.ban({ reason: reason ? `${reason.data}` : null })
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${memberToBan} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
+            return message.reply({ embed: BotSuccess(client, `${member} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
         })
         .catch(any => {
             return message.reply({ embed: BotError(client, `Something went wrong with banning this user.`) })

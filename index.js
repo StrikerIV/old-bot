@@ -8,7 +8,7 @@ const cooldowns = new Map()
 
 async function initalizeBot() {
 
-    const client = new Client({ intents: ['GUILDS', 'GUILD_MESSAGES', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] });
+    const client = new Client({ intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_BANS', 'GUILD_MESSAGES', 'GUILD_MESSAGE_REACTIONS'] });
 
     const loadedEvents = await loadEvents()
 
@@ -32,6 +32,9 @@ async function initalizeBot() {
     client.once('ready', () => { loadedEvents.ready(client) })
 
     client.on('guildCreate', (guild) => { loadedEvents.GuildCreate(guild) })
+
+    client.on('guildBanAdd', (guild, user) => { loadedEvents.GuildBanAdd(guild, user) })
+    client.on('guildBanRemove', (guild, user) => { loadedEvents.GuildBanRemove(guild, user) })
 
     client.login(config.token)
 
