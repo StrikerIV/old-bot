@@ -1,3 +1,5 @@
+const Discord = require("discord.js")
+
 function checkPermission(member, channel, permission) {
     return member.permissionsIn(channel).has(permission, true)
 }
@@ -10,6 +12,13 @@ function resultObject(bot, error, permission) {
     }
 }
 
+/**
+ * Checks permissions and returns whether they have privileges. 
+ * @param {Discord.Message} message 
+ * @param {CommandPermissions} memberPermissions 
+ * @param {CommandPermissions} botPermissions 
+ * @returns {PermissionObject}
+ */
 module.exports = (message, memberPermissions, botPermissions) => {
 
     return new Promise((result) => {

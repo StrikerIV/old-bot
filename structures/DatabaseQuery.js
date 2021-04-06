@@ -16,6 +16,12 @@ function ResultObject(error, data, fields) {
     }
 }
 
+/**
+ * Queries and returns a DatabaseObject from the database.
+ * @param {string} query 
+ * @param {Object[]} parameters 
+ * @returns {DatabaseObject}
+ */
 module.exports = (query, parameters) => {
 
     return new Promise(async (result) => {

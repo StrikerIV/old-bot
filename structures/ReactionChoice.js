@@ -10,6 +10,12 @@ async function getChoice(reactionCollector) {
 
 }
 
+/**
+ * Structure to ask for a choice from a user.
+ * @param {Discord.Message} message 
+ * @param {string} question 
+ * @returns {boolean}
+ */
 module.exports = async (message, question) => {
 
     let questionEmbed = new Discord.MessageEmbed()

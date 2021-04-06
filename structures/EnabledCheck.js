@@ -1,5 +1,12 @@
+const Discord = require("discord.js");
 const DatabaseQuery = require("./DatabaseQuery")
 
+/**
+ * Checks to see if the command category is enabled.
+ * @param {Discord.Message}
+ * @param {Commmand}
+ * @returns {boolean}
+ */
 module.exports = async (message, command) => {
 
     let categoryToCheck = null;

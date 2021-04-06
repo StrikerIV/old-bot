@@ -9,6 +9,13 @@ function resultObject(error, type, argument) {
     }
 }
 
+/**
+ * Checks to see if arguments are valid.
+ * @param {CommandInformation} info
+ * @param {CommandArguments} args
+ * @returns {ResultObject}
+ */
+
 module.exports = (info, args) => {
 
     return new Promise((result) => {

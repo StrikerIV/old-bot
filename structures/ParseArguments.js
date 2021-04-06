@@ -1,4 +1,4 @@
-const { Message } = require("discord.js")
+const Discord = require("discord.js")
 const BotError = require("./BotError")
 const HelpEmbed = require("./HelpEmbed")
 
@@ -19,6 +19,13 @@ function CreateTimeObject(units, time, milliseconds) {
     }
 }
 
+/**
+ * Parses arguments for commands.
+ * @param {CommandInformation} info 
+ * @param {Discord.Message} message 
+ * @param {CommandArguments} args 
+ * @returns {ArgumentObject}
+ */
 module.exports = async (info, message, args) => {
 
     let arguments = info.arguments

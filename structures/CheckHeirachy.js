@@ -1,4 +1,4 @@
-const { Message } = require("discord.js")
+const Discord = require("discord.js")
 const HelpEmbed = require("./HelpEmbed")
 
 function CreateHeirachyObject(above, type) {
@@ -8,6 +8,12 @@ function CreateHeirachyObject(above, type) {
     }
 }
 
+/**
+ * Checks the heirachy to determine positions.
+ * @param {Discord.Message} message 
+ * @param {Discord.GuildMember} punished 
+ * @returns {HeiarchyObject}
+ */
 module.exports = (message, punished) => {
 
     let initiator = message.member.roles.highest.position
