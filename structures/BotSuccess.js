@@ -10,6 +10,8 @@ module.exports = (client, success) => {
 
     return new Discord.MessageEmbed()
         .setDescription(`${client.krytcheck} ${success}`)
+        .setFooter("Bot Success")
         .setColor("GREEN")
+        .setTimestamp()
 
 }

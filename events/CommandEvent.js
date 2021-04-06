@@ -1,5 +1,5 @@
 const config = require("../utils/config.json");
-const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck } = require("../structures/StructuresManager");
+const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError } = require("../structures/StructuresManager");
 const { cooldowns } = require("../index");
 
 exports.CommandEvent = async (client, message) => {
@@ -7,11 +7,18 @@ exports.CommandEvent = async (client, message) => {
     if (message.author.bot) {
         return;
     }
-    if (message.content.indexOf(config.prefix) !== 0) {
+    
+    let fetchPrefixQuery = await DatabaseQuery("SELECT prefix FROM guilds WHERE guild_id = ?", [message.guild.id])
+    if(fetchPrefixQuery.error) {
+        return;
+    }
+    
+    let prefix = fetchPrefixQuery.data[0].prefix
+    if (!message.content.startsWith(prefix) || message.author.bot) {
         return;
     }
 
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const commandName = args.shift().toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(commandName));
     if (!command) {

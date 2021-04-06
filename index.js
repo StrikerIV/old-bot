@@ -31,6 +31,7 @@ async function initalizeBot() {
 
     client.once('ready', () => { loadedEvents.ready(client) })
 
+    client.on('message', (message) => { loadedEvents.Message(message) })
     client.on('guildCreate', (guild) => { loadedEvents.GuildCreate(guild) })
 
     client.on('guildBanAdd', (guild, user) => { loadedEvents.GuildBanAdd(guild, user) })

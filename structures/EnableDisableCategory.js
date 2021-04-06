@@ -19,7 +19,6 @@ module.exports = async (client, message, args) => {
     let subArgument = args.find(argument => argument.type === "SubArgument")
     let secondSubArgument = args.find(argument => argument.type === "SubArgument")
 
-    if(!validCategories.includes(category)) return message.reply({ embed: BotError(client, `${category[0].toUpperCase() + category.substring(1)} category is invalid.`) })
     let statusQuery = await DatabaseQuery("SELECT * FROM guilds WHERE guild_id = ? LIMIT 1", [message.guild.id])
     if (statusQuery.error) {
         return message.reply({ embed: DatabaseError(client) })

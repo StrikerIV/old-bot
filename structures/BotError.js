@@ -10,6 +10,8 @@ module.exports = (client, error) => {
 
     return new Discord.MessageEmbed()
         .setDescription(`${client.krytx} ${error}`)
+        .setFooter("Bot Error")
         .setColor("RED")
+        .setTimestamp()
 
 }
