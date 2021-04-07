@@ -7,13 +7,14 @@ exports.CommandEvent = async (client, message) => {
     if (message.author.bot) {
         return;
     }
-    
-    let fetchPrefixQuery = await DatabaseQuery("SELECT prefix FROM guilds WHERE guild_id = ?", [message.guild.id])
-    if(fetchPrefixQuery.error) {
+
+    let fetchGuildQuery = await DatabaseQuery(`SELECT * FROM guilds WHERE guild_id = ? LIMIT 1`, [message.guild.id])
+    if (fetchGuildQuery.error) {
         return;
     }
-    
-    let prefix = fetchPrefixQuery.data[0].prefix
+
+    let fetchGuildData = fetchGuildQuery.data[0]
+    let prefix = fetchGuildData.prefix
     if (!message.content.startsWith(prefix) || message.author.bot) {
         return;
     }
@@ -50,7 +51,7 @@ exports.CommandEvent = async (client, message) => {
 
     }
 
-    let commandEnabled = await EnabledCheck(message, command)
+    let commandEnabled = await EnabledCheck(fetchGuildData, message, command)
     if (!commandEnabled) {
         return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
     }

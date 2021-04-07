@@ -28,7 +28,7 @@ exports.run = async (client, message, args) => {
     }
 
     if (time) {
-        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason, time) VALUES(?, ?, ?, ?)", [message.guild.id, memberToBan.id, reason ? `${reason.data}` : null, time ? moment().valueOf() + time.data.milliseconds : null])
+        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason, time_banned, time_unbanned) VALUES(?, ?, ?, ?, ?)", [message.guild.id, memberToBan.id, reason ? `${reason.data}` : null, time ? moment().valueOf() : null, time ? moment().valueOf() + time.data.milliseconds : null])
         if (updateQuery.error) {
             return message.reply({ embed: DatabaseError(client) })
         }

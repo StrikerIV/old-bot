@@ -7,7 +7,7 @@ const DatabaseQuery = require("./DatabaseQuery")
  * @param {Commmand}
  * @returns {boolean}
  */
-module.exports = async (message, command) => {
+module.exports = async (data, message, command) => {
 
     let categoryToCheck = null;
     let category = command.info.category;
@@ -20,10 +20,7 @@ module.exports = async (message, command) => {
             return true;
     }
 
-    let response = await DatabaseQuery(`SELECT ${categoryToCheck} FROM guilds WHERE guild_id = ? LIMIT 1`, [message.guild.id])
-    let data = response.data[0]
-
-    if (data[Object.keys(data)[0]] === 1) {
+    if (data[categoryToCheck] === 1) {
         // category is enabled
         return true;
     } else {

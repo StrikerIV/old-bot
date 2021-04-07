@@ -2,8 +2,6 @@ let { BotError, BotSuccess, DatabaseError, DatabaseQuery, ReactionChoice, Enable
 
 exports.run = async (client, message, args) => {
 
-    console.log(args)
-
     let subCommand = args.find(argument => argument.type === "SubCommand").data
     let subArgument = args.find(argument => argument.type === "SubArgument")
     // let secondSubArgument = args.find(argument => argument.type === "SubArgument")
@@ -12,11 +10,21 @@ exports.run = async (client, message, args) => {
         await EnableDisableCategory(client, message, args)
     }
 
-    if(subCommand === "prefix") {
+    if (subCommand === "prefix") {
         //setting prefix for bot
-        if(!subArgument) {
+        if (!subArgument) {
             return message.reply({ embed: BotError(client, "A \`prefix\` needs to be supplied to set to.") })
         }
+        if (subArgument.data.length > 5) {
+            return message.reply({ embed: BotError(client, "Prefixes have a max of 5 characters long.") })
+        }
+
+        let updateQuery = await DatabaseQuery("UPDATE guilds SET prefix = ? WHERE guild_id = ?", [subArgument.data, message.guild.id])
+        if (updateQuery.error) {
+            return message.reply({ embed: DatabaseError(client) })
+        }
+
+        return message.reply({ embed: BotSuccess(client, `The prefix was successfully set to \`${subArgument.data}\`.`) })
     }
 
 }
