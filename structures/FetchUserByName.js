@@ -8,7 +8,9 @@ const { DiscordAPIError } = require('discord.js');
  * @param {string} search 
  * @returns {}
  */
-module.exports = (message, search) => {
+module.exports = async (message, search) => {
 
+    let membersToSearch = await message.guild.members.cache.find(member => member.displayName.includes(search))
+    console.log(membersToSearch)
 
 }

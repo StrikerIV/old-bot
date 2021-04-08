@@ -7,15 +7,8 @@ exports.run = async (client, message, args) => {
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
 
-    let isBanned = await DatabaseQuery("SELECT * FROM guilds_bans WHERE user_id = ? AND guild_id = ? LIMIT 1", [memberToBan.id, memberToBan.guild.id])
-    if (isBanned.error) {
-        return message.reply({ embed: DatabaseError(client) })
-    }
-
-    let isBannedData = isBanned.data
-    if (isBannedData[0]) {
-        return message.reply({ embed: BotError(client, `This user is currently banned.`) })
-    }
+    let isBanned = await message.guild.fetchBan(memberToBan.id).then(ban => { return true }).catch(any => { return false })
+    if(isBanned) return message.reply({ embed: BotError(client, "This user is banned.")})
 
     let canBan = await CheckHeirachy(message, memberToBan)
 

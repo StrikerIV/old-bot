@@ -10,6 +10,7 @@ const ReactionChoice = require("./ReactionChoice")
 const ParseArguments = require("./ParseArguments")
 const PermissionCheck = require("./PermissionCheck")
 const PermissionError = require("./PermissionError")
+const FetchUserByName = require("./FetchUserByName")
 const EnableDisableCategory = require("./EnableDisableCategory")
 
 module.exports = {
@@ -25,5 +26,6 @@ module.exports = {
     ParseArguments: ParseArguments,
     PermissionCheck: PermissionCheck,
     PermissionError: PermissionError,
+    FetchUserByName: FetchUserByName,
     EnableDisableCategory: EnableDisableCategory,
 }

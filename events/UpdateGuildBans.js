@@ -3,7 +3,7 @@ const moment = require("moment")
 //"SELECT * FROM guilds_bans WHERE time BETWEEN ? and ?", [now, range]
 module.exports = async (client) => {
 
-    console.log(moment().valueOf())
+    console.log("updating")
     let FetchBansQuery = await DatabaseQuery("SELECT * FROM guilds_bans WHERE time_unbanned <= ?", [moment().valueOf()])
     if (FetchBansQuery.error) {
         return;
@@ -26,23 +26,22 @@ module.exports = async (client) => {
         }
 
         let banned = moment(ban.time_banned)
-        let unbanned = moment(ban.time_unbanned)
+        let unbanned = moment()
 
-        let seconds = banned.diff(unbanned, 'seconds')
-        let minutes = banned.diff(unbanned, 'minutes')
-        let hours = banned.diff(unbanned, 'hours')
-        let days = banned.diff(unbanned, 'days')
+        let durationOfMute = moment.duration(unbanned.diff(banned))
 
-        console.log(days, hours, minutes, seconds)
+        let seconds = durationOfMute.get('seconds')
+        let minutes = durationOfMute.get('minutes')
+        let hours = durationOfMute.get('hours')
+        let days = durationOfMute.get('days')
 
         let secondsFormatted = seconds != 0 && seconds <= 1 ? "second" : "seconds"
         let minutesFormatted = minutes != 0 && minutes <= 1 ? "minute" : "minutes"
         let hoursFormatted = hours != 0 && hours <= 1 ? "hour" : "hours"
         let daysFormatted = days != 0 && days <= 1 ? "day" : "days"
 
-        let timeMuted = `${days ? ` ${days} ${daysFormatted},` : ""} ${hours ? ` ${hours} ${hoursFormatted},` : ""} ${minutes ? ` ${minutes} ${minutesFormatted},` : ""} ${seconds ? ` ${seconds} ${secondsFormatted},` : ""}`
-        console.log(`Automatically unbanned. They were muted for ${timeMuted}.`)
-        //guild.members.unban(user_id, `Automatically unbanned. They were muted for ${timeMuted}.`)
+        let timeMuted = `${days ? `${days} ${daysFormatted},` : ""}${hours ? ` ${hours} ${hoursFormatted},` : ""}${minutes ? `${hours ? ` ${minutes} ${minutesFormatted},` : ` ${minutes} ${minutesFormatted}`}` : ""}${seconds ? ` ${minutes ? `and ${seconds} ${secondsFormatted}` : ` ${seconds} ${secondsFormatted}`}` : ""}`
+        guild.members.unban(user_id, `Automatically unbanned. They were banned for ${timeMuted}.`).catch(any => {})
 
     }
 

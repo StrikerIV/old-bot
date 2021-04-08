@@ -5,6 +5,7 @@ const { updateLocale } = require("moment");
 
 exports.ready = async (client) => {
 
+    setInterval(function () { UpdateGuildBans(client); }, 5000)
     UpdateGuildBans(client)
 
     client.guilds.fetch('671577661952360459').then(function (guild) {
