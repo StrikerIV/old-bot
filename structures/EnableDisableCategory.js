@@ -3,6 +3,7 @@ const BotSuccess = require("./BotSuccess")
 const DatabaseError = require("./DatabaseError")
 const DatabaseQuery = require("./DatabaseQuery")
 const ReactionChoice = require("./ReactionChoice")
+const { UpdateGuildCache } = require("./StructuresManager")
 
 const validCategories = ["moderation"]
 
@@ -19,17 +20,12 @@ module.exports = async (client, message, args) => {
     let subArgument = args.find(argument => argument.type === "SubArgument")
     let secondSubArgument = args.find(argument => argument.type === "SubArgument")
 
-    let statusQuery = await DatabaseQuery("SELECT * FROM guilds WHERE guild_id = ? LIMIT 1", [message.guild.id])
-    if (statusQuery.error) {
-        return message.reply({ embed: DatabaseError(client) })
-    }
-
-    let statusData = statusQuery.data[0]
+    let statusData = message.guild.data
     let categoryData = statusData[`${category}_enabled`]
 
     if (subArgument && subArgument.data === "enable") {
         //enable category
-        if(categoryData === 1) {
+        if (categoryData === 1) {
             //currently enabled, no need to update
             return message.reply({ embed: BotError(client, `${category[0].toUpperCase() + category.substring(1)} commands are already enabled.`) })
         }
@@ -37,10 +33,12 @@ module.exports = async (client, message, args) => {
         if (updateQuery.error) {
             return message.reply({ embed: DatabaseError(client) })
         }
+
+        await UpdateGuildCache(message.guild, true)
         return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been enabled.`) })
     } else if (subArgument && subArgument.data === "disable") {
         //disable category
-        if(categoryData === 0) {
+        if (categoryData === 0) {
             //currently disabled, no need to update
             return message.reply({ embed: BotError(client, `${category[0].toUpperCase() + category.substring(1)} commands are already disabled.`) })
         }
@@ -48,6 +46,8 @@ module.exports = async (client, message, args) => {
         if (updateQuery.error) {
             return message.reply({ embed: DatabaseError(client) })
         }
+
+        await UpdateGuildCache(message.guild, true)
         return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been disabled.`) })
     } else {
         if (categoryData === 1) {
@@ -62,6 +62,8 @@ module.exports = async (client, message, args) => {
             if (updateQuery.error) {
                 return message.reply({ embed: DatabaseError(client) })
             }
+
+            await UpdateGuildCache(message.guild, true)
             return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been disabled.`) })
         } else {
             //disabled
@@ -75,6 +77,8 @@ module.exports = async (client, message, args) => {
             if (updateQuery.error) {
                 return message.reply({ embed: DatabaseError(client) })
             }
+
+            await UpdateGuildCache(message.guild, true)
             return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been enabled.`) })
         }
     }

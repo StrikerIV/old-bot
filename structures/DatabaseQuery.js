@@ -19,7 +19,7 @@ function ResultObject(error, data, fields) {
 /**
  * Queries and returns a DatabaseObject from the database.
  * @param {string} query 
- * @param {Object[]} parameters 
+ * @param {Array} parameters 
  * @returns {DatabaseObject}
  */
 module.exports = (query, parameters) => {

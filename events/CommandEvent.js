@@ -1,6 +1,7 @@
 const config = require("../utils/config.json");
-const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError } = require("../structures/StructuresManager");
-const { cooldowns } = require("../index");
+const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError, UpdateGuildCache } = require("../structures/StructuresManager");
+const { guilds, cooldowns } = require("../index");
+const { Collection } = require("discord.js");
 
 exports.CommandEvent = async (client, message) => {
 
@@ -8,13 +9,23 @@ exports.CommandEvent = async (client, message) => {
         return;
     }
 
-    let fetchGuildQuery = await DatabaseQuery(`SELECT * FROM guilds WHERE guild_id = ? LIMIT 1`, [message.guild.id])
-    if (fetchGuildQuery.error) {
-        return;
+    if (!guilds.has(message.guild.id)) {
+        //guild is not fetched currently
+        await UpdateGuildCache(message.guild, true)
     }
 
-    let fetchGuildData = fetchGuildQuery.data[0]
-    let prefix = fetchGuildData.prefix
+    let guildData = guilds.get(message.guild.id)
+    if (guildData.refresh) {
+        //data needs to be refreshed
+        await UpdateGuildCache(message.guild, true)
+    }
+
+    guildData = guildData.data
+    let prefix = guildData.prefix
+
+    //apply database data to guild object in message
+    message.guild.data = guildData
+
     if (!message.content.startsWith(prefix) || message.author.bot) {
         return;
     }
@@ -31,7 +42,7 @@ exports.CommandEvent = async (client, message) => {
     if (info.cooldown) {
         //eval cooldowns
         if (!cooldowns.has(info.command)) {
-            cooldowns.set(info.command, new Map())
+            cooldowns.set(info.command, new Collection())
         }
 
         const now = Date.now()
@@ -51,7 +62,7 @@ exports.CommandEvent = async (client, message) => {
 
     }
 
-    let commandEnabled = await EnabledCheck(fetchGuildData, message, command)
+    let commandEnabled = await EnabledCheck(guildData, message, command)
     if (!commandEnabled) {
         return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
     }

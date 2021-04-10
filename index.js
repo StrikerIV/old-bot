@@ -1,10 +1,11 @@
-const { Client, Collection, Intents } = require('discord.js');
+const { Client, Collection, Intents, DiscordAPIError } = require('discord.js');
 const { parse } = require("path")
 const config = require("./utils/config.json");
 const glob = require("glob");
 const { loadEvents } = require("./events/EventsManager.js")
 
-const cooldowns = new Map()
+const cooldowns = new Collection()
+const guilds = new Collection()
 
 async function initalizeBot() {
 
@@ -44,3 +45,4 @@ async function initalizeBot() {
 initalizeBot()
 
 module.exports.cooldowns = cooldowns;
+module.exports.guilds = guilds;

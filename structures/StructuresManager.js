@@ -11,6 +11,7 @@ const ParseArguments = require("./ParseArguments")
 const PermissionCheck = require("./PermissionCheck")
 const PermissionError = require("./PermissionError")
 const FetchUserByName = require("./FetchUserByName")
+const UpdateGuildCache = require("./UpdateGuildCache")
 const EnableDisableCategory = require("./EnableDisableCategory")
 
 module.exports = {
@@ -27,5 +28,6 @@ module.exports = {
     PermissionCheck: PermissionCheck,
     PermissionError: PermissionError,
     FetchUserByName: FetchUserByName,
+    UpdateGuildCache: UpdateGuildCache,
     EnableDisableCategory: EnableDisableCategory,
 }
