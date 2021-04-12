@@ -5,8 +5,7 @@ const { updateLocale } = require("moment");
 
 exports.ready = async (client) => {
 
-    setInterval(function () { UpdateGuildBans(client); }, 5000)
-    UpdateGuildBans(client)
+    //setInterval(function () { UpdateGuildBans(client); }, 5000)
 
     client.guilds.fetch('671577661952360459').then(function (guild) {
         let emojis = guild.emojis.cache

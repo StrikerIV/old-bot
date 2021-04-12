@@ -1,5 +1,6 @@
 const BotError = require("./BotError")
 const HelpEmbed = require("./HelpEmbed")
+const GetRequest = require("./GetRequest")
 const BotSuccess = require("./BotSuccess")
 const EnabledCheck = require("./EnabledCheck")
 const CheckHeirachy = require("./CheckHeirachy")
@@ -17,6 +18,7 @@ const EnableDisableCategory = require("./EnableDisableCategory")
 module.exports = {
     BotError: BotError,
     HelpEmbed: HelpEmbed,
+    GetRequest: GetRequest,
     BotSuccess: BotSuccess,
     EnabledCheck: EnabledCheck,
     CheckHeirachy: CheckHeirachy,
