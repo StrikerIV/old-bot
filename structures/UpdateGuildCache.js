@@ -29,7 +29,12 @@ module.exports = async (guild, refresh) => {
 
         let guildData = guildDataFetch.data[0]
         if (!guildData) {
-            return;
+            //there is no table for the guild, add one
+            let updateQuery = await DatabaseQuery("INSERT INTO guilds(guild_id) VALUES(?)", [guild.id]) 
+            if(updateQuery.error) {
+                return;
+            }
+            return module.exports(guild, true);
         }
 
         //now we have updated database guild data, add it to the guild cache

@@ -64,7 +64,7 @@ exports.info = {
     ],
     permissions: [
         ["BAN_MEMBERS"],
-        ["BAN_MEMBERS"]
+        ["SEND_MESSAGES", "BAN_MEMBERS"]
     ],
     aliases: null,
     usageAreas: null,

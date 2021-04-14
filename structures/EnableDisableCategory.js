@@ -3,7 +3,7 @@ const BotSuccess = require("./BotSuccess")
 const DatabaseError = require("./DatabaseError")
 const DatabaseQuery = require("./DatabaseQuery")
 const ReactionChoice = require("./ReactionChoice")
-const { UpdateGuildCache } = require("./StructuresManager")
+const UpdateGuildCache = require("./UpdateGuildCache")
 
 const validCategories = ["moderation"]
 

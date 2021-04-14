@@ -18,6 +18,7 @@ function ResultObject(error, data, fields) {
 
 /**
  * Queries and returns a DatabaseObject from the database.
+ * @typedef {Object{error, data, fields}} DatabaseObject
  * @param {string} query 
  * @param {Array} parameters 
  * @returns {DatabaseObject}

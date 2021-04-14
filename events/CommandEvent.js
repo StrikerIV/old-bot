@@ -5,6 +5,11 @@ const { Collection } = require("discord.js");
 
 exports.CommandEvent = async (client, message) => {
 
+    if(config.developerMode) {
+        //developer mode is enabled, all traffic is disabled except on dev server
+        if(!config.developerServers.includes(message.guild.id)) return;
+    }
+
     if (message.author.bot) {
         return;
     }
@@ -18,6 +23,7 @@ exports.CommandEvent = async (client, message) => {
     if (guildData.refresh) {
         //data needs to be refreshed
         await UpdateGuildCache(message.guild, true)
+        exports.CommandEvent(client, message)
     }
 
     guildData = guildData.data
@@ -87,6 +93,7 @@ exports.CommandEvent = async (client, message) => {
     if (argumentCheck === "HelpEmbed") {
         return message.reply(HelpEmbed(message, info))
     }
+
     if (argumentCheck.error) {
         if (argumentCheck.type === "missingArgument") {
             return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position + 1}\`.`))
