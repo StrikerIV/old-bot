@@ -41,4 +41,6 @@ module.exports = async (guild, refresh) => {
         guilds.set(guild.id, CreateGuildCacheObject(false, guildData))
     }
 
+    return;
+
 }

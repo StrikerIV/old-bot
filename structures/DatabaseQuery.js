@@ -64,6 +64,8 @@ module.exports = (query, parameters) => {
         for ([index, param] of parameters.entries()) {
             params.append('params[]', param)
         }
+
+        console.log(params)
         const RequestConfig = {
             method: HTTPMethod,
             url: 'https://kryt.xyz/api/v1/database',
