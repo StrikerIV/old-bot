@@ -22,35 +22,24 @@ exports.run = async (client, message, args) => {
     let reason = args.find(argument => argument.type === "Reason")
 
     let mutedRole = message.guild.data.muted_role_id;
+    mutedRole = await message.guild.roles.fetch(mutedRole)
 
-    if (mutedRole === null) {
-        //see if guld has a muted role
+    if (!mutedRole) {
         mutedRole = message.guild.roles.cache.find(role => role.name === "MUTED")
         if (!mutedRole) {
             mutedRole = await createMutedRole(message)
             if (!mutedRole) {
-                console.log("here")
                 return message.reply({ embed: DatabaseError(client) })
-            }
-        }
-    } else {
-        //fetch role
-        mutedRole = await message.guild.roles.fetch(mutedRole)
-        if (!mutedRole) {
-            //try to get it by name
-            mutedRole = await message.guild.roles.resolve("MUTED")
-            if (!mutedRole || mutedRole.botRole) {
-                mutedRole = await createMutedRole(message)
-                if (!mutedRole) {
-                    console.log("here1")
-                    return message.reply({ embed: DatabaseError(client) })
-                }
             }
         }
     }
 
-    let canMute = CheckHeirachy(message, memberToMute)
+    let isMuted = memberToMute.roles.cache.find(role => role === mutedRole)
+    if (isMuted) {
+        return message.reply({ embed: BotError(client, `This user is already muted.`) })
+    }
 
+    let canMute = CheckHeirachy(message, memberToMute)
     if (!canMute.above) {
         if (canMute.type === "bot") {
             return message.reply({ embed: BotError(client, `The bot cannot mute this user. Check the heirachy positions.`) })
@@ -77,7 +66,6 @@ exports.run = async (client, message, args) => {
 
     let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id, reason, time_muted, time_unmuted) VALUES(?, ?, ?, ?, ?)", [message.guild.id, memberToMute.id, reason ? `${reason.data}` : null, time ? moment().valueOf() : null, time ? moment().valueOf() + time.data.milliseconds : null])
     if (updateQuery.error) {
-        console.log("here2")
         return message.reply({ embed: DatabaseError(client) })
     }
 

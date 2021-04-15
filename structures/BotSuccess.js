@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const EvaluateOptions = require('./EvaluateOptions');
 
 /**
  * Formats a bot success to return to a user. 
@@ -6,12 +7,12 @@ const Discord = require('discord.js');
  * @param {string} success 
  * @returns {Discord.MessageEmbed}
  */
-module.exports = (client, success) => {
+module.exports = (client, success, options) => {
 
-    return new Discord.MessageEmbed()
+    let SuccessEmbed = new Discord.MessageEmbed()
         .setDescription(`${client.krytcheck} ${success}`)
-        .setFooter("Bot Success")
         .setColor("GREEN")
-        .setTimestamp()
+
+    return EvaluateOptions(SuccessEmbed, options)
 
 }

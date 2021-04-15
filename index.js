@@ -5,6 +5,7 @@ const glob = require("glob");
 const { loadEvents } = require("./events/EventsManager.js")
 
 const cooldowns = new Collection()
+const variables = new Collection()
 const guilds = new Collection()
 
 async function initalizeBot() {
@@ -45,4 +46,5 @@ async function initalizeBot() {
 initalizeBot()
 
 module.exports.cooldowns = cooldowns;
+module.exports.variables = variables;
 module.exports.guilds = guilds;

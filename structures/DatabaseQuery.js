@@ -44,14 +44,26 @@ module.exports = (query, parameters) => {
                 return result(ResultObject(true, null, null))
         }
 
+        if (parameters.includes(null) || QueryMethod === "INSERT") {
+            //when we supply 'null' in an INSERT, we want default values, therefor we need to remove those values
+            //start with params, then we create the values input
+            let splitQuery = query.split("(")
+            splitQuery = splitQuery[1].split(")")[0].split(",")
+
+            let database = query.split(" ")[2].split("(")[0]
+            let actualParams = parameters.filter(param => param != null)
+
+            parameters = actualParams
+            query = `INSERT INTO ${database}(${splitQuery.slice(0, parameters.length)}) VALUES(${"?, ".repeat(parameters.length - 1) + "?"})`
+        }
+
         const params = new URLSearchParams({
             'query': query,
         })
 
-        for await ([index, param] of parameters.entries()) {
+        for ([index, param] of parameters.entries()) {
             params.append('params[]', param)
         }
-
         const RequestConfig = {
             method: HTTPMethod,
             url: 'https://kryt.xyz/api/v1/database',

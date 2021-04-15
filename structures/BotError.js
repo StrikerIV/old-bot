@@ -1,4 +1,5 @@
 const Discord = require('discord.js');
+const EvaluateOptions = require("./EvaluateOptions")
 
 /**
  * Formats a bot error to return to a user.
@@ -6,12 +7,12 @@ const Discord = require('discord.js');
  * @param {string} error 
  * @returns {Discord.MessageEmbed}
  */
-module.exports = (client, error) => {
+module.exports = (client, error, options) => {
 
-    return new Discord.MessageEmbed()
+    let ErrorEmbed = new Discord.MessageEmbed()
         .setDescription(`${client.krytx} ${error}`)
-        .setFooter("Bot Error")
         .setColor("RED")
-        .setTimestamp()
+
+    return EvaluateOptions(ErrorEmbed, options)
 
 }

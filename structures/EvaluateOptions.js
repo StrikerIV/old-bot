@@ -1,5 +1,3 @@
-const Discord = require("discord.js")
-const HelpEmbed = require("./HelpEmbed")
 
 /**
  * @typedef {Object[?timestamp|?author|?footer|?title|?color]} EmbedOptions
@@ -19,7 +17,7 @@ module.exports = (embed, options) => {
     let color = options.color ?? false;
 
     if (timestamp) {
-        if(typeof timestamp === "boolean") {
+        if (typeof timestamp === "boolean") {
             embed.setTimestamp()
         } else {
             embed.setTimestamp(timestamp)
@@ -38,7 +36,7 @@ module.exports = (embed, options) => {
         embed.setTitle(title)
     }
 
-    if(color) {
+    if (color) {
         embed.setColor(color)
     }
 

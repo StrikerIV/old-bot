@@ -10,10 +10,11 @@ const EvaluateOptions = require('./EvaluateOptions');
 module.exports = (message, options) => {
 
     let OngoingEmbed = new Discord.MessageEmbed()
-    if(message) {
+
+    if (message) {
         OngoingEmbed.setDescription(message)
     }
 
-    return(EvaluateOptions(OngoingEmbed, options))
+    return EvaluateOptions(OngoingEmbed, options)
 
 }
