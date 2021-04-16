@@ -69,7 +69,7 @@ module.exports = (query, parameters) => {
         console.log(params)
         const RequestConfig = {
             method: HTTPMethod,
-            url: 'https://kryt.xyz/api/v1/database',
+            url: `${config.baseURL}/api/v1/database`,
             headers: {
                 'Authorization': `Bearer ${config.APIToken}`,
                 'Content-Type': 'application/x-www-form-urlencoded'

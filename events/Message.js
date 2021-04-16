@@ -1,7 +1,6 @@
 const Discord = require("discord.js")
 const mysql = require("mysql")
 const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing } = require("../structures/StructuresManager")
-const  { NSFWClassifier } = require("../nsfw/nsfw.classifier.ts")
 
 function createNSFWObject(explict, className, data) {
     return {
@@ -47,7 +46,7 @@ exports.Message = async (message) => {
             'image': url,
         })
 
-        let nsfwData = await GetRequest("https://kryt.xyz/api/v1/nsfw", params)
+        let nsfwData = await GetRequest(`${baseUrl}/api/v1/nsfw`, params)
         nsfwData = nsfwData[Object.keys(nsfwData)[0]];
 
         if ((nsfwData.unsafe * 100) >= 55) {
