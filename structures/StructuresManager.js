@@ -3,6 +3,7 @@ const HelpEmbed = require("./HelpEmbed")
 const GetRequest = require("./GetRequest")
 const BotOngoing = require("./BotOngoing")
 const BotSuccess = require("./BotSuccess")
+const FetchImage = require("./FetchImage")
 const EnabledCheck = require("./EnabledCheck")
 const CheckHeirachy = require("./CheckHeirachy")
 const ArgumentCheck = require("./ArgumentCheck")
@@ -23,6 +24,7 @@ module.exports = {
     GetRequest: GetRequest,
     BotOngoing: BotOngoing,
     BotSuccess: BotSuccess,
+    FetchImage: FetchImage,
     EnabledCheck: EnabledCheck,
     CheckHeirachy: CheckHeirachy,
     ArgumentCheck: ArgumentCheck,

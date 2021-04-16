@@ -1,6 +1,7 @@
 const Discord = require("discord.js")
 const mysql = require("mysql")
-const { GetRequest, DatabaseQuery, DatabaseError, BotOngoing } = require("../structures/StructuresManager")
+const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing } = require("../structures/StructuresManager")
+const  { NSFWClassifier } = require("../nsfw/nsfw.classifier.ts")
 
 function createNSFWObject(explict, className, data) {
     return {
@@ -32,12 +33,11 @@ exports.Message = async (message) => {
     }
 
     //test to see if valid discord attachment
-    let urlRegex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/gm)
+    let urlRegex = new RegExp(/\.(jpg|png|jpeg)$/gm)
 
-    //check to see if content contains url, if so we check for nudity in it.
+    //check to see if content contains image, if so we check for nudity in it.
     if (message.content.match(urlRegex) || message.embeds[0]) {
-        //valid url
-
+        //valid url for image
         let url = message.content.match(urlRegex) ? message.content : message.embeds[0] ? message.embeds[0].thumbnail : null;
         if (!url) {
             return;

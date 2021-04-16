@@ -21,11 +21,14 @@
   },
   "homepage": "https://github.com/StrikerIV/bot#readme",
   "dependencies": {
+    "@tensorflow/tfjs": "^3.4.0",
+    "@tensorflow/tfjs-node": "^3.4.0",
     "axios": "^0.21.1",
     "discord.js": "github:discordjs/discord.js",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
+    "nsfwjs": "^2.4.0",
     "query-string": "^7.0.0",
     "setimmediate": "^1.0.5"
   }
