@@ -5,9 +5,9 @@ const { Collection } = require("discord.js");
 
 exports.CommandEvent = async (client, message) => {
 
-    if(config.developerMode) {
+    if (config.developerMode) {
         //developer mode is enabled, all traffic is disabled except on dev server
-        if(!config.developerServers.includes(message.guild.id)) return;
+        if (!config.developerServers.includes(message.guild.id)) return;
     }
 
     if (message.author.bot) {
