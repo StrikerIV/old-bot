@@ -1,5 +1,5 @@
 const Discord = require("discord.js")
-const mysql = require("mysql")
+const config = require("../utils/config.json")
 const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing } = require("../structures/StructuresManager")
 
 function createNSFWObject(explict, className, data) {
@@ -20,7 +20,6 @@ exports.Message = async (message) => {
     if (message.mentions.has(message.guild.me)) {
 
         let guildData = message.guild.data
-
         let informationEmbed = new Discord.MessageEmbed()
             .setTimestamp()
             .setColor('BLUE')
@@ -46,7 +45,7 @@ exports.Message = async (message) => {
             'image': url,
         })
 
-        let nsfwData = await GetRequest(`${baseUrl}/api/v1/nsfw`, params)
+        let nsfwData = await GetRequest(`${config.baseURL}/api/v1/nsfw`, params)
         nsfwData = nsfwData[Object.keys(nsfwData)[0]];
 
         if ((nsfwData.unsafe * 100) >= 55) {

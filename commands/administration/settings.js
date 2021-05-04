@@ -1,4 +1,4 @@
-let { BotError, BotSuccess, DatabaseError, DatabaseQuery, ReactionChoice, EnableDisableCategory } = require("../../structures/StructuresManager")
+let { BotError, BotSuccess, DatabaseError, DatabaseQuery, ReactionChoice, EnableDisableCategory, EvaluateGuildCache } = require("../../structures/StructuresManager")
 
 exports.run = async (client, message, args) => {
 
@@ -24,7 +24,9 @@ exports.run = async (client, message, args) => {
             return message.reply({ embed: DatabaseError(client) })
         }
 
-        return message.reply({ embed: BotSuccess(client, `The prefix was successfully set to \`${subArgument.data}\`.`) })
+        //update guild cache
+        await EvaluateGuildCache(message.guild, true)
+        return message.reply({ embed: BotSuccess(client, `The prefix was successfully set to \`${subArgument.data}\`.\n\nAllow a minute or two for your changes to propogate.`) })
     }
 
 }

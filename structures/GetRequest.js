@@ -27,6 +27,7 @@ module.exports = (url, data) => {
                 return result(response.data)
             })
             .catch(function (error) {
+                //console.log(error)
                 return result(false)
             });
 

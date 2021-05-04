@@ -3,7 +3,7 @@ const BotSuccess = require("./BotSuccess")
 const DatabaseError = require("./DatabaseError")
 const DatabaseQuery = require("./DatabaseQuery")
 const ReactionChoice = require("./ReactionChoice")
-const UpdateGuildCache = require("./UpdateGuildCache")
+const EvaluteGuildCache = require("./EvaluateGuildCache")
 
 const validCategories = ["moderation"]
 
@@ -34,7 +34,7 @@ module.exports = async (client, message, args) => {
             return message.reply({ embed: DatabaseError(client) })
         }
 
-        await UpdateGuildCache(message.guild, true)
+        await EvaluteGuildCache(message.guild, true)
         return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been enabled.`) })
     } else if (subArgument && subArgument.data === "disable") {
         //disable category
@@ -47,7 +47,7 @@ module.exports = async (client, message, args) => {
             return message.reply({ embed: DatabaseError(client) })
         }
 
-        await UpdateGuildCache(message.guild, true)
+        await EvaluteGuildCache(message.guild, true)
         return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been disabled.`) })
     } else {
         if (categoryData === 1) {
@@ -63,7 +63,7 @@ module.exports = async (client, message, args) => {
                 return message.reply({ embed: DatabaseError(client) })
             }
 
-            await UpdateGuildCache(message.guild, true)
+            await EvaluteGuildCache(message.guild, true)
             return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been disabled.`) })
         } else {
             //disabled
@@ -78,7 +78,7 @@ module.exports = async (client, message, args) => {
                 return message.reply({ embed: DatabaseError(client) })
             }
 
-            await UpdateGuildCache(message.guild, true)
+            await EvaluteGuildCache(message.guild, true)
             return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been enabled.`) })
         }
     }

@@ -1,20 +1,18 @@
-const { UpdateGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
+const { EvaluteGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
 const { guilds } = require("../index")
 const { updateLocale } = require("moment")
 
 exports.GuildMemberUpdate = async (oldMember, newMember) => {
 
-    console.log("here")
     if (!guilds.has(oldMember.guild.id)) {
         //guild is not fetched currently
-        await UpdateGuildCache(oldMember.guild, true)
+        await EvaluteGuildCache(oldMember.guild, true)
     }
 
-    console.log("here2")
     let guildData = guilds.get(oldMember.guild.id)
     if (guildData.refresh) {
         //data needs to be refreshed
-        await UpdateGuildCache(oldMember.guild, true)
+        await EvaluteGuildCache(oldMember.guild, true)
         exports.GuildMemberUpdate(oldMember, newMember)
     }
 
