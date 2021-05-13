@@ -26,7 +26,7 @@ exports.run = async (client, message, args) => {
 
         //update guild cache
         await EvaluateGuildCache(message.guild, true)
-        return message.reply({ embed: BotSuccess(client, `The prefix was successfully set to \`${subArgument.data}\`.\n\nAllow a minute or two for your changes to propogate.`) })
+        return message.reply({ embed: BotSuccess(client, `The prefix was successfully set to \`${subArgument.data}\`.\n\nAllow a minute or two for your changes to propagate.`) })
     }
 
 }

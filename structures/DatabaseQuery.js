@@ -47,7 +47,7 @@ module.exports = (query, parameters) => {
         if (parameters.includes(null) || QueryMethod === "INSERT") {
             //when we supply 'null' in an INSERT, we want default values, therefor we need to remove those values
             //start with params, then we create the values input
-            
+
             let splitQuery = query.split("(")
             splitQuery = splitQuery[1].split(")")[0].split(",")
 
@@ -66,7 +66,6 @@ module.exports = (query, parameters) => {
             params.append('params[]', param)
         }
 
-        console.log(params)
         const RequestConfig = {
             method: HTTPMethod,
             url: `${config.baseURL}/api/v1/database`,

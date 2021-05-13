@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const config = require("../utils/config.json")
-const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing } = require("../structures/StructuresManager")
+const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing, EvaluateGuildCache } = require("../structures/StructuresManager")
 
 function createNSFWObject(explict, className, data) {
     return {
@@ -12,6 +12,13 @@ function createNSFWObject(explict, className, data) {
 
 exports.Message = async (message) => {
 
+    let guildData = message.guild.data
+    if (!guildData) {
+        let data = await EvaluateGuildCache(message.guild, true)
+        message.guild.data = data
+        return exports.Message(message)
+    }
+
     if (message.author.bot) {
         return;
     }
@@ -19,13 +26,12 @@ exports.Message = async (message) => {
     //check to see if bot was pinged to return basic information on the bot
     if (message.mentions.has(message.guild.me)) {
 
-        let guildData = message.guild.data
         let informationEmbed = new Discord.MessageEmbed()
             .setTimestamp()
             .setColor('BLUE')
             .setTitle("Information")
             .setFooter("Information")
-            .setDescription(`Hey! Here's some basic information about me.\n\nYou can change any value here using the \`settings\` command.\n\n**Prefix**\nThe current prefix for your server is : \`${guildData.prefix}\`\n`)
+            .setDescription(`Hey! Here's some basic information about me.\n\nYou can change any value here using the \`settings\` command.\n\n**Prefix**\nThe current prefix for your server is : \`${guildData.data[0].prefix}\`\n`)
 
         return message.reply({ embed: informationEmbed })
     }

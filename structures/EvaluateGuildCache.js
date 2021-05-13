@@ -21,7 +21,7 @@ module.exports = async (guild, refresh) => {
 
     return new Promise(async (result) => {
         let guildDataFetch = await DatabaseQuery("SELECT * FROM guilds WHERE guild_id = ?", [guild.id])
-        console.log(guildDataFetch)
+
         if (guildDataFetch.error) {
             return result(CacheObject(true, null, null))
         } else {

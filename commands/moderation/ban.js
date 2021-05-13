@@ -8,7 +8,7 @@ exports.run = async (client, message, args) => {
     let reason = args.find(argument => argument.type === "Reason")
 
     let isBanned = await message.guild.fetchBan(memberToBan.id).then(ban => { return true }).catch(any => { return false })
-    if(isBanned) return message.reply({ embed: BotError(client, "This user is banned.")})
+    if (isBanned) return message.reply({ embed: BotError(client, "This user is banned.") })
 
     let canBan = await CheckHeirachy(message, memberToBan)
 

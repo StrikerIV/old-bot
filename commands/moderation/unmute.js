@@ -3,27 +3,15 @@ const moment = require("moment")
 
 exports.run = async (client, message, args) => {
 
-    let userToUnban = args.find(argument => argument.type === "User").data
-    let reasonForUnban = args.find(argument => argument.type === "Reason")
 
-    //unban user
-    message.guild.members.unban(userToUnban.id, [reasonForUnban ? reasonForUnban : null])
-        .then((user) => {
-            return message.reply({
-                embed: BotSuccess(client, `${user} has been unbanned.`)
-            })
-        })
-        .catch(any => {
-            return message.reply({ embed: BotError(client, `This user is not banned.`) })
-        })
 
 }
 
 exports.info = {
     usage: null,
-    command: "unban",
+    command: "unmute",
     category: "moderation",
-    description: "Unbans a user from a guild.",
+    description: "Unmutes a user in a guild.",
     arguments: [
         {
             position: 0,

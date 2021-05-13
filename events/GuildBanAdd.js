@@ -10,14 +10,11 @@ exports.GuildBanAdd = async (guild, user) => {
         return;
     }
 
-    //firstly, check to see if they were banned by the bot
-    let isBanned = await DatabaseQuery("SELECT * FROM guilds_bans WHERE guild_id = ? AND user_id = ?", [guild.id, user.id]);
-    if (!isBanned.error) {
-        if (isBanned.data[0]) return; //already in database, therefor banned
-        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason) VALUES(?, ?, ?)", [guild.id, user.id, fetchedBan.reason]);
-        if (updateQuery.error) {
-            return;
-        }
+    // no need for double call
+    // if the bot banned them, it will do nothing
+    let updateBan = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason) VALUES(?, ?, ?) ON DUPLICATE KEY UPDATE user_id = user_id", [guild.id, user.id, fetchedBan.reason]);
+    if (!updateBan.error) {
+        return;
     }
 
 }
