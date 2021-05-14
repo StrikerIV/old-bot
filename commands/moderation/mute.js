@@ -17,6 +17,7 @@ async function createMutedRole(message) {
 
 exports.run = async (client, message, args) => {
 
+    console.log(args)
     let memberToMute = args.find(argument => argument.type === "GuildMember").data
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
@@ -56,12 +57,20 @@ exports.run = async (client, message, args) => {
 
     //for text, disable send messages
     textChannels.each(channel => {
-        channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating overwrite for channels for muted role.")
+        try {
+            channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating overwrite for channels for muted role.")
+        } catch (e) {
+            return message.reply({ embed: BotError(client, `Something went wrong with muting this user.`) })
+        }
     })
 
     //for voice, disable speaking
     voiceChannels.each(channel => {
-        channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating overwrite for channels for muted role.")
+        try {
+            channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating overwrite for channels for muted role.")
+        } catch (e) {
+            return message.reply({ embed: BotError(client, `Something went wrong with muting this user.`) })
+        }
     })
 
     let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id, reason, time_muted, time_unmuted) VALUES(?, ?, ?, ?, ?)", [message.guild.id, memberToMute.id, reason ? `${reason.data}` : null, time ? moment().valueOf() : null, time ? moment().valueOf() + time.data.milliseconds : null])

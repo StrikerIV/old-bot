@@ -25,8 +25,8 @@ module.exports = async (guild, refresh) => {
         if (guildDataFetch.error) {
             return result(CacheObject(true, null, null))
         } else {
-            await guilds.set(guild.id, guildDataFetch.data)
-            return result(CacheObject(false, false, guildDataFetch.data))
+            await guilds.set(guild.id, guildDataFetch.data[0])
+            return result(CacheObject(false, false, guildDataFetch.data[0]))
         }
     })
 

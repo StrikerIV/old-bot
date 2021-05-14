@@ -1,4 +1,4 @@
-const { EvaluateGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
+const { EvaluteGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
 const { guilds } = require("../index")
 const { updateLocale } = require("moment")
 
@@ -6,17 +6,16 @@ exports.GuildMemberUpdate = async (oldMember, newMember) => {
 
     if (!guilds.has(oldMember.guild.id)) {
         //guild is not fetched currently
-        await EvaluateGuildCache(oldMember.guild, true)
+        await EvaluteGuildCache(oldMember.guild, true)
     }
 
     let guildData = guilds.get(oldMember.guild.id)
     if (guildData.refresh) {
         //data needs to be refreshed
-        await EvaluateGuildCache(oldMember.guild, true)
+        await EvaluteGuildCache(oldMember.guild, true)
         return exports.GuildMemberUpdate(oldMember, newMember)
     }
 
-    guildData = guildData.data[0]
     let mutedRole = guildData.muted_role_id
     let guild = oldMember.guild
 
