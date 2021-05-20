@@ -1,4 +1,5 @@
 let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery, DatabaseError } = require("../../structures/StructuresManager")
+const Discord = require("discord.js")
 const moment = require("moment")
 
 async function createMutedRole(message) {
@@ -55,21 +56,26 @@ exports.run = async (client, message, args) => {
     let textChannels = channels.filter(channel => channel.type === "text")
     let voiceChannels = channels.filter(channel => channel.type === "voice")
 
-    //for text, disable send messages
-    textChannels.each(channel => {
-        try {
-            channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating overwrite for channels for muted role.")
-        } catch (e) {
-            return message.reply({ embed: BotError(client, `Something went wrong with muting this user.`) })
+    // check to see if any channel does not have the muted permissions
+    textChannels.forEach(async (channel) => {
+        if (channel.permissionsFor(mutedRole).has("SEND_MESSAGES")) {
+            // does not have permission
+            try {
+                channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating permissions for muted role.")
+            } catch {
+                return;
+            }
         }
     })
 
-    //for voice, disable speaking
-    voiceChannels.each(channel => {
-        try {
-            channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating overwrite for channels for muted role.")
-        } catch (e) {
-            return message.reply({ embed: BotError(client, `Something went wrong with muting this user.`) })
+    voiceChannels.forEach(async (channel) => {
+        if (channel.permissionsFor(mutedRole).has("SPEAK")) {
+            // does not have permission
+            try {
+                channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating permissions for muted role.")
+            } catch {
+                return;
+            }
         }
     })
 

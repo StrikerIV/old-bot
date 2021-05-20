@@ -35,14 +35,9 @@ exports.GuildMemberUpdate = async (oldMember, newMember) => {
         }
     } else if (newMember.roles.cache.has(mutedRole.id) && !oldMember.roles.cache.has(mutedRole.id)) {
         //muted role was added, therefor "muted"
-        //firstly, check to see if they were already muted by the bot
-        let isMuted = await DatabaseQuery("SELECT * FROM guilds_mutes WHERE guild_id = ? AND user_id = ?", [guild.id, newMember.id]);
-        if (!isMuted.error) {
-            if (isMuted.data[0]) return; //already in database, therefor muted
-            let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id) VALUES(?, ?", [guild.id, newMember.id]);
-            if (updateQuery.error) {
-                return;
-            }
+        let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id) VALUES(?, ?) ON DUPLICATE KEY user_id = user_id", [guild.id, newMember.id]);
+        if (updateQuery.error) {
+            return;
         }
     }
 }
