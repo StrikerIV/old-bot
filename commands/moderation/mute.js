@@ -18,7 +18,6 @@ async function createMutedRole(message) {
 
 exports.run = async (client, message, args) => {
 
-    console.log(args)
     let memberToMute = args.find(argument => argument.type === "GuildMember").data
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")

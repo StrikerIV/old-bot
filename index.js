@@ -27,10 +27,6 @@ async function initalizeBot() {
         })
     });
 
-    process.on('unhandledRejection', error => {
-        console.log(error)
-    });
-
     client.once('ready', () => { loadedEvents.Ready(client) })
 
     client.on('message', (message) => { loadedEvents.Message(message) })
