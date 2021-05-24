@@ -1,6 +1,6 @@
 const { EvaluateGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
+const config = require("../utils/config.json");
 const { guilds } = require("../index")
-const moment = require("moment")
 
 module.exports = async (client) => {
 
@@ -35,9 +35,9 @@ module.exports = async (client) => {
             //guild is not currently cached
             await EvaluateGuildCache(guild, true)
         }
-    
+
         let guildData = guilds.get(guild.id)
-    
+
         if (guildData.error) {
             return;
         }

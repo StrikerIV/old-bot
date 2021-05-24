@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const config = require("../utils/config.json")
-const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing, EvaluateGuildCache } = require("../structures/StructuresManager")
+const { GetRequest, BotOngoing, EvaluateGuildCache } = require("../structures/StructuresManager")
 
 function createNSFWObject(explict, className, data) {
     return {
@@ -12,9 +12,15 @@ function createNSFWObject(explict, className, data) {
 
 exports.Message = async (message) => {
 
+    if (config.developerMode) {
+        //developer mode is enabled, all traffic is disabled except on dev server
+        if (!config.developerServers.includes(message.guild.id)) return;
+    }
+
     let guildData = message.guild.data
+
     if (!guildData) {
-        let data = await EvaluateGuildCache(message.guild, true)
+        let data = await EvaluateGuildCache(message.guild)
         message.guild.data = data
         return exports.Message(message)
     }

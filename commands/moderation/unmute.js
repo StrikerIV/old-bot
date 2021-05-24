@@ -18,7 +18,7 @@ exports.run = async (client, message, args) => {
     }
 
     // if role is different than the one in database, we update
-    if(guildData.muted_role_id != mutedRole.id) {
+    if (guildData.muted_role_id != mutedRole.id) {
         let updateQuery = await DatabaseQuery("UPDATE guilds SET muted_role_id = ? WHERE guild_id = ?", [mutedRole.id, message.guild.id])
         if (updateQuery.error) {
             return;
@@ -60,7 +60,7 @@ exports.info = {
         ["BAN_MEMBERS"]
     ],
     aliases: null,
-    usageAreas: null,
+    usageAreas: ["text"],
     developer: false,
     cooldown: 5,
 }

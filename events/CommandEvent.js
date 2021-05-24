@@ -1,5 +1,5 @@
 const config = require("../utils/config.json");
-const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError, EvaluateGuildCache } = require("../structures/StructuresManager");
+const { BotError, HelpEmbed, ArgumentCheck, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError, EvaluateGuildCache } = require("../structures/StructuresManager");
 const { guilds, cooldowns } = require("../index");
 const { Collection } = require("discord.js");
 
@@ -14,19 +14,12 @@ exports.CommandEvent = async (client, message) => {
         return;
     }
 
-    if (!guilds.has(message.guild.id)) {
-        //guild is not currently cached
-        await EvaluateGuildCache(message.guild, true)
-    }
+    let guildData = message.guild.data
 
-    let guildData = guilds.get(message.guild.id)
-
-    if (guildData.error) {
-        return message.reply({ embed: BotError("We're having trouble fetching your data. Try again in a few.") })
-    }
-    if (guildData.refresh) {
-        //cache needs to be refreshed
-        await EvaluateGuildCache(message.guild, true)
+    if (!guildData) {
+        let data = await EvaluateGuildCache(message.guild)
+        message.guild.data = data
+        return exports.CommandEvent(client, message)
     }
 
     //apply database data to guild object in message

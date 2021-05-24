@@ -1,5 +1,5 @@
 const { DatabaseQuery } = require("../structures/StructuresManager")
-const moment = require("moment")
+const config = require("../utils/config.json");
 
 module.exports = async (client) => {
 

@@ -67,7 +67,7 @@ exports.info = {
         ["SEND_MESSAGES", "BAN_MEMBERS"]
     ],
     aliases: null,
-    usageAreas: null,
+    usageAreas: ["text"],
     developer: false,
     cooldown: 5,
 }

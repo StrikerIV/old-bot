@@ -52,16 +52,20 @@ module.exports = (query, parameters) => {
             splitQuery = splitQuery[1].split(")")[0].split(",")
 
             let table = query.split(" ")[2].split("(")[0]
+            let amountofNulls = parameters.filter(param => param === null).length
 
-            parameters.forEach((param, index) => {
-                if(param == null) {
-                    parameters.splice(index, 1)
-                    splitQuery.splice(index, 1)
-                }
-            })
+            for (x = 0; x < amountofNulls; x++) {
+
+                let indexOfNull = parameters.findIndex(param => param === null)
+
+                splitQuery.splice(indexOfNull, 1)
+                parameters.splice(indexOfNull, 1)
+
+            }
 
             query = `INSERT INTO ${table}(${splitQuery.slice(0, parameters.length)}) VALUES(${"?, ".repeat(parameters.length - 1) + "?"})`
         }
+
 
         const params = new URLSearchParams({
             'query': query,
@@ -84,6 +88,7 @@ module.exports = (query, parameters) => {
         axios(RequestConfig)
             .then(function (response) {
                 let data = response.data
+                console.log(data)
                 return result(ResultObject(data.error, data.data, data.fields))
             })
             .catch(function (error) {

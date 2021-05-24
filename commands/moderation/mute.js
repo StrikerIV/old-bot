@@ -22,15 +22,15 @@ exports.run = async (client, message, args) => {
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
 
-    let mutedRole = message.guild.data.muted_role_id;
-    mutedRole = await message.guild.roles.fetch(mutedRole)
+    let mutedRoleId = message.guild.data.muted_role_id;
+    let mutedRole = await message.guild.roles.fetch(mutedRoleId)
 
     if (!mutedRole) {
         mutedRole = message.guild.roles.cache.find(role => role.name === "MUTED")
         if (!mutedRole) {
             mutedRole = await createMutedRole(message)
             if (!mutedRole) {
-                return message.reply({ embed: DatabaseError(client) })
+                return message.reply({ embed: BotError(client, "We're having trouble fetching the muted role. Try creating one manually named `MUTED`.") })
             }
         }
     }
@@ -122,7 +122,7 @@ exports.info = {
         ["SEND_MESSAGES", "MANAGE_CHANNELS", "MANAGE_ROLES", "BAN_MEMBERS"]
     ],
     aliases: null,
-    usageAreas: null,
+    usageAreas: ["text"],
     developer: false,
     cooldown: 5,
 }

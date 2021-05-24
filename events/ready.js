@@ -1,7 +1,5 @@
 const UpdateGuildMutes = require("./UpdateGuildMutes");
 const UpdateGuildBans = require("./UpdateGuildBans");
-const mysql = require("mysql");
-const { updateLocale } = require("moment");
 
 exports.ready = async (client) => {
 
