@@ -88,7 +88,6 @@ module.exports = (query, parameters) => {
         axios(RequestConfig)
             .then(function (response) {
                 let data = response.data
-                console.log(data)
                 return result(ResultObject(data.error, data.data, data.fields))
             })
             .catch(function (error) {
