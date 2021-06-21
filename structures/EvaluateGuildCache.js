@@ -3,14 +3,7 @@ const axios = require('axios');
 const Discord = require('discord.js');
 const { guilds } = require("../index");
 const DatabaseQuery = require('./DatabaseQuery');
-
-function CacheObject(error, refresh, data) {
-    return {
-        error: error,
-        refresh: refresh,
-        data: data
-    }
-}
+const { monthsShort } = require('moment');
 
 /**
  * Updates guild cache.
@@ -20,13 +13,18 @@ function CacheObject(error, refresh, data) {
 module.exports = async (guild, refresh) => {
 
     return new Promise(async (result) => {
-        let guildDataFetch = await DatabaseQuery("SELECT * FROM guilds WHERE guild_id = ?", [guild.id])
+        let guildDataFetch = await DatabaseQuery("SELECT * FROM guilds WHERE guild_id = ?", [guild.id]);
 
         if (guildDataFetch.error) {
-            return result(CacheObject(true, null, null))
+            return module.exports(guild);
+        }
+
+        if (refresh) {
+            await guilds.delete(guild.id)
+            return result(guildDataFetch.data[0])
         } else {
-            await guilds.set(guild.id, guildDataFetch.data)
-            return result(CacheObject(false, false, guildDataFetch.data))
+            await guilds.set(guild.id, guildDataFetch.data[0])
+            return result(guildDataFetch.data[0])
         }
     })
 

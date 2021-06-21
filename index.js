@@ -1,4 +1,4 @@
-const { Client, Collection, Intents, DiscordAPIError } = require('discord.js');
+const { Client, Collection } = require('discord.js');
 const { parse } = require("path")
 const config = require("./utils/config.json");
 const glob = require("glob");
@@ -25,10 +25,6 @@ async function initalizeBot() {
             const props = require(file)
             client.commands.set(name, props);
         })
-    });
-
-    process.on('unhandledRejection', error => {
-        console.log(error)
     });
 
     client.once('ready', () => { loadedEvents.Ready(client) })

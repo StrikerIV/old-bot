@@ -1,8 +1,15 @@
 const { EvaluateGuildCache, DatabaseQuery } = require("../structures/StructuresManager")
+const config = require("../utils/config.json");
 const { guilds } = require("../index")
-const { updateLocale } = require("moment")
 
 exports.GuildMemberUpdate = async (oldMember, newMember) => {
+    //emitted on an update of a member
+    //update muted stuff for them
+
+    if (config.developerMode) {
+        //developer mode is enabled, all traffic is disabled except on dev server
+        if (!config.developerServers.includes(oldMember.guild.id)) return;
+    }
 
     if (!guilds.has(oldMember.guild.id)) {
         //guild is not fetched currently
@@ -16,7 +23,6 @@ exports.GuildMemberUpdate = async (oldMember, newMember) => {
         return exports.GuildMemberUpdate(oldMember, newMember)
     }
 
-    guildData = guildData.data[0]
     let mutedRole = guildData.muted_role_id
     let guild = oldMember.guild
 
@@ -30,20 +36,17 @@ exports.GuildMemberUpdate = async (oldMember, newMember) => {
 
     if (oldMember.roles.cache.has(mutedRole.id) && !newMember.roles.cache.has(mutedRole.id)) {
         //muted role was removed, therefor "unmuted"
+        console.log("unmuted")
         let updateQuery = await DatabaseQuery("DELETE FROM guilds_mutes WHERE guild_id = ? AND user_id = ?", [guild.id, newMember.id])
         if (updateQuery.error) {
             return;
         }
     } else if (newMember.roles.cache.has(mutedRole.id) && !oldMember.roles.cache.has(mutedRole.id)) {
         //muted role was added, therefor "muted"
-        //firstly, check to see if they were already muted by the bot
-        let isMuted = await DatabaseQuery("SELECT * FROM guilds_mutes WHERE guild_id = ? AND user_id = ?", [guild.id, newMember.id]);
-        if (!isMuted.error) {
-            if (isMuted.data[0]) return; //already in database, therefor muted
-            let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id) VALUES(?, ?", [guild.id, newMember.id]);
-            if (updateQuery.error) {
-                return;
-            }
-        }
+        console.log("muted")
+        // let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id, time_muted) VALUES(?, ?, ?)", [guild.id, oldMember.id]);
+        // if (updateQuery.error) {
+        //     return;
+        // }
     }
 }

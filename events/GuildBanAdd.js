@@ -1,9 +1,14 @@
-const mysql = require("mysql")
+const config = require("../utils/config.json");
 const { DatabaseQuery } = require("../structures/StructuresManager")
 
 exports.GuildBanAdd = async (guild, user) => {
     // emitted on a ban being issued to a user
     // add them to database to track banned users
+
+    if (config.developerMode) {
+        //developer mode is enabled, all traffic is disabled except on dev server
+        if (!config.developerServers.includes(guild.id)) return;
+    }
 
     let fetchedBan = await guild.fetchBan(user.id);
     if (!fetchedBan) {

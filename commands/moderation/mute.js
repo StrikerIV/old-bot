@@ -21,15 +21,15 @@ exports.run = async (client, message, args) => {
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
 
-    let mutedRole = message.guild.data.muted_role_id;
-    mutedRole = await message.guild.roles.fetch(mutedRole)
+    let mutedRoleId = message.guild.data.muted_role_id;
+    let mutedRole = await message.guild.roles.fetch(mutedRoleId)
 
     if (!mutedRole) {
         mutedRole = message.guild.roles.cache.find(role => role.name === "MUTED")
         if (!mutedRole) {
             mutedRole = await createMutedRole(message)
             if (!mutedRole) {
-                return message.reply({ embed: DatabaseError(client) })
+                return message.reply({ embed: BotError(client, "We're having trouble fetching the muted role. Try creating one manually named `MUTED`.") })
             }
         }
     }
@@ -54,24 +54,46 @@ exports.run = async (client, message, args) => {
     let textChannels = channels.filter(channel => channel.type === "text")
     let voiceChannels = channels.filter(channel => channel.type === "voice")
 
-    //for text, disable send messages
-    textChannels.each(channel => {
-        channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating overwrite for channels for muted role.")
+    // check to see if any channel does not have the muted permissions
+    textChannels.forEach(async (channel) => {
+        if (channel.permissionsFor(mutedRole).has("SEND_MESSAGES")) {
+            // does not have permission
+            try {
+                channel.updateOverwrite(mutedRole, { "SEND_MESSAGES": false }, "Updating permissions for muted role.")
+            } catch {
+                return;
+            }
+        }
     })
 
-    //for voice, disable speaking
-    voiceChannels.each(channel => {
-        channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating overwrite for channels for muted role.")
+    voiceChannels.forEach(async (channel) => {
+        if (channel.permissionsFor(mutedRole).has("SPEAK")) {
+            // does not have permission
+            try {
+                channel.updateOverwrite(mutedRole, { "SPEAK": false }, "Updating permissions for muted role.")
+            } catch {
+                return;
+            }
+        }
     })
 
-    let updateQuery = await DatabaseQuery("INSERT INTO guilds_mutes(guild_id, user_id, reason, time_muted, time_unmuted) VALUES(?, ?, ?, ?, ?)", [message.guild.id, memberToMute.id, reason ? `${reason.data}` : null, time ? moment().valueOf() : null, time ? moment().valueOf() + time.data.milliseconds : null])
+    let timeOfMute = Date.now()
+    let query = "INSERT INTO guilds_cases(guild_id, user_id, moderator_id, type, reason, time_of_case) VALUES(?, ?, ?, ?, ?, ?);"
+    let params = [message.guild.id, memberToMute.id, message.author.id, "mute", reason ? `${reason.data}` : null, timeOfMute]
+
+    if (time) {
+        query = query.concat("INSERT INTO guilds_tempmutes(guild_id, user_id, time_to_unmute) VALUES(?, ?, ?);")
+        params = params.concat([message.guild.id, memberToBan.id, timeOfMute + time.data.milliseconds])
+    }
+
+    let updateQuery = await DatabaseQuery(query, params)
     if (updateQuery.error) {
         return message.reply({ embed: DatabaseError(client) })
     }
 
     memberToMute.roles.add(mutedRole, reason ? `${reason.data}` : null)
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been muted${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
+            return message.reply({ embed: BotSuccess(client, `${member} has been muted${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` }) })
         })
         .catch(any => {
             return message.reply({ embed: BotError(client, `Something went wrong with muting this user.`) })
@@ -92,13 +114,13 @@ exports.info = {
         },
         {
             position: 1,
-            argument: "<time>",
+            argument: "<reason/time>",
             type: "Time",
             required: false
         },
         {
             position: 1,
-            argument: "<reason>",
+            argument: "<reason/time>",
             type: "Reason",
             required: false
         }
@@ -108,7 +130,7 @@ exports.info = {
         ["SEND_MESSAGES", "MANAGE_CHANNELS", "MANAGE_ROLES", "BAN_MEMBERS"]
     ],
     aliases: null,
-    usageAreas: null,
+    usageAreas: ["text"],
     developer: false,
     cooldown: 5,
 }

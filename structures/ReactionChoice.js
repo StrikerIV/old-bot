@@ -1,14 +1,5 @@
 const Discord = require("discord.js")
-
-async function getChoice(reactionCollector) {
-
-    return new Promise(async (result) => {
-        await reactionCollector.on('collect', reaction => {
-            result(reaction)
-        })
-    })
-
-}
+const GetReactionChoice = require("./GetReactionChoice")
 
 /**
  * Structure to ask for a choice from a user.
@@ -30,14 +21,12 @@ module.exports = async (message, question) => {
     const filter = (reaction, user) => user.id === message.author.id && reaction.emoji.id === message.client.krytcheck.id || reaction.emoji.id === message.client.krytx.id
     const reactionCollector = questionMessage.createReactionCollector(filter, { time: 15000 })
 
-    let reactionChoice = await getChoice(reactionCollector)
-
-    if (reactionChoice.emoji.name === "krytcheck") {
-        //return true because reacted with "yes"
-        return true;
-    } else {
-        //return false because reacted with "no"
-        return false;
+    let reactionChoice = await GetReactionChoice(reactionCollector)
+    if (!reactionChoice) {
+        // ended without valid reaction applied
+        return null;
     }
+
+    return question[reactionChoice]
 
 }

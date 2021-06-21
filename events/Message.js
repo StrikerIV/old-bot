@@ -1,6 +1,6 @@
 const Discord = require("discord.js")
 const config = require("../utils/config.json")
-const { GetRequest, DatabaseQuery, DatabaseError, FetchImage, BotOngoing, EvaluateGuildCache } = require("../structures/StructuresManager")
+const { GetRequest, BotOngoing, EvaluateGuildCache } = require("../structures/StructuresManager")
 
 function createNSFWObject(explict, className, data) {
     return {
@@ -12,9 +12,15 @@ function createNSFWObject(explict, className, data) {
 
 exports.Message = async (message) => {
 
+    if (config.developerMode) {
+        //developer mode is enabled, all traffic is disabled except on dev server
+        if (!config.developerServers.includes(message.guild.id)) return;
+    }
+
     let guildData = message.guild.data
+
     if (!guildData) {
-        let data = await EvaluateGuildCache(message.guild, true)
+        let data = await EvaluateGuildCache(message.guild)
         message.guild.data = data
         return exports.Message(message)
     }
@@ -36,29 +42,29 @@ exports.Message = async (message) => {
         return message.reply({ embed: informationEmbed })
     }
 
-    //test to see if valid discord attachment
-    let urlRegex = new RegExp(/\.(jpg|png|jpeg)$/gm)
+    // //test to see if valid discord attachment
+    // let urlRegex = new RegExp(/\.(jpg|png|jpeg)$/gm)
 
-    //check to see if content contains image, if so we check for nudity in it.
-    if (message.content.match(urlRegex) || message.embeds[0]) {
-        //valid url for image
-        let url = message.content.match(urlRegex) ? message.content : message.embeds[0] ? message.embeds[0].thumbnail : null;
-        if (!url) {
-            return;
-        }
+    // //check to see if content contains image, if so we check for nudity in it.
+    // if (message.content.match(urlRegex) || message.embeds[0]) {
+    //     //valid url for image
+    //     let url = message.content.match(urlRegex) ? message.content : message.embeds[0] ? message.embeds[0].thumbnail : null;
+    //     if (!url) {
+    //         return;
+    //     }
 
-        const params = new URLSearchParams({
-            'image': url,
-        })
+    //     const params = new URLSearchParams({
+    //         'image': url,
+    //     })
 
-        let nsfwData = await GetRequest(`${config.baseURL}/api/v1/nsfw`, params)
-        nsfwData = nsfwData[Object.keys(nsfwData)[0]];
+    //     let nsfwData = await GetRequest(`${config.baseURL}/api/v1/nsfw`, params)
+    //     nsfwData = nsfwData[Object.keys(nsfwData)[0]];
 
-        if ((nsfwData.unsafe * 100) >= 55) {
-            //deemed unsafe, delete
-            return message.delete()
-                .then(msg => msg.channel.send({ embed: BotOngoing(`Woah there ${msg.author}! We think this has NSFW content; we've removed it to be safe.`, { color: "RED" }) }))
-        }
-    }
+    //     if ((nsfwData.unsafe * 100) >= 55) {
+    //         //deemed unsafe, delete
+    //         return message.delete()
+    //             .then(msg => msg.channel.send({ embed: BotOngoing(`Woah there ${msg.author}! We think this has NSFW content; we've removed it to be safe.`, { color: "RED" }) }))
+    //     }
+    // }
 
 }

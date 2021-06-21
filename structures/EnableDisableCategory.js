@@ -34,7 +34,7 @@ module.exports = async (client, message, args) => {
             return message.reply({ embed: DatabaseError(client) })
         }
 
-        await EvaluteGuildCache(message.guild, true)
+        await EvaluteGuildCache(message.guild.id)
         return message.reply({ embed: BotSuccess(client, `${category[0].toUpperCase() + category.substring(1)} commands have been enabled.`) })
     } else if (subArgument && subArgument.data === "disable") {
         //disable category
@@ -53,6 +53,9 @@ module.exports = async (client, message, args) => {
         if (categoryData === 1) {
             //currently enabled
             let choice = await ReactionChoice(message, `Would you like to disable ${category} commands?`)
+            if (choice === null) {
+                return message.reply({ embed: BotError(client, `This command has timed out.`) })
+            }
             if (!choice) {
                 return message.reply({ embed: BotError(client, `${category[0].toUpperCase() + category.substring(1)} commands were not disabled.`) })
             }
@@ -68,6 +71,9 @@ module.exports = async (client, message, args) => {
         } else {
             //disabled
             let choice = await ReactionChoice(message, `Would you like to enable ${category}  commands?`)
+            if (choice === null) {
+                return message.reply({ embed: BotError(client, `This command has timed out.`) })
+            }
             if (!choice) {
                 return message.reply({ embed: BotError(client, `${category[0].toUpperCase() + category.substring(1)} commands were not enabled.`) })
             }

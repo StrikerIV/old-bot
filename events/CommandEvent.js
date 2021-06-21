@@ -1,5 +1,5 @@
 const config = require("../utils/config.json");
-const { BotError, HelpEmbed, ArgumentCheck, DatabaseQuery, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError, EvaluateGuildCache } = require("../structures/StructuresManager");
+const { BotError, HelpEmbed, ArgumentCheck, EnabledCheck, PermissionError, ParseArguments, PermissionCheck, DatabaseError, EvaluateGuildCache } = require("../structures/StructuresManager");
 const { guilds, cooldowns } = require("../index");
 const { Collection } = require("discord.js");
 
@@ -14,33 +14,21 @@ exports.CommandEvent = async (client, message) => {
         return;
     }
 
-    let guildData = null;
-    if (!guilds.has(message.guild.id)) {
-        //guild is not currently cached
-        await EvaluateGuildCache(message.guild, true)
+    let guildData = guilds.get(message.guild.id)
+    if (!guildData) {
+        let data = await EvaluateGuildCache(message.guild, false)
+        message.guild.data = data
+        return exports.CommandEvent(client, message)
     }
-
-    guildData = guilds.get(message.guild.id)
-
-    if (guildData.error) {
-        return message.reply({ embed: BotError("We're having trouble fetching your data. Try again in a few.") })
-    }
-    if (guildData.refresh) {
-        //cache needs to be refreshed
-        await EvaluateGuildCache(message.guild, true)
-    }
-
-    guildData = guildData[0]
-    let prefix = guildData.prefix
 
     //apply database data to guild object in message
     message.guild.data = guildData
 
-    if (!message.content.startsWith(prefix) || message.author.bot) {
+    if (!message.content.startsWith(guildData.prefix) || message.author.bot) {
         return;
     }
 
-    const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    const args = message.content.slice(guildData.prefix.length).trim().split(/ +/g);
     const commandName = args.shift().toLowerCase();
     const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.info.aliases && cmd.info.aliases.includes(commandName));
     if (!command) {
@@ -100,7 +88,7 @@ exports.CommandEvent = async (client, message) => {
 
     if (argumentCheck.error) {
         if (argumentCheck.type === "missingArgument") {
-            return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position + 1}\`.`))
+            return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.argument}\` in position \`${argumentCheck.argument.position + 1}\`.`))
         }
     }
 
