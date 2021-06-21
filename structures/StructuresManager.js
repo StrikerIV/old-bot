@@ -15,7 +15,10 @@ const EvaluateOptions = require("./EvaluateOptions")
 const PermissionCheck = require("./PermissionCheck")
 const PermissionError = require("./PermissionError")
 const FetchUserByName = require("./FetchUserByName")
+const GetMessageInput = require("./GetMessageInput")
+const GetReactionChoice = require("./GetReactionChoice")
 const EvaluateGuildCache = require("./EvaluateGuildCache")
+const CustomReactionChoice = require("./CustomReactionChoice")
 const EnableDisableCategory = require("./EnableDisableCategory")
 
 module.exports = {
@@ -36,6 +39,9 @@ module.exports = {
     PermissionCheck: PermissionCheck,
     PermissionError: PermissionError,
     FetchUserByName: FetchUserByName,
+    GetMessageInput: GetMessageInput,
+    GetReactionChoice: GetReactionChoice,
     EvaluateGuildCache: EvaluateGuildCache,
+    CustomReactionChoice: CustomReactionChoice,
     EnableDisableCategory: EnableDisableCategory,
 }

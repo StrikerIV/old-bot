@@ -1,5 +1,4 @@
 let { BotError, BotSuccess, CheckHeirachy, DatabaseQuery, DatabaseError } = require("../../structures/StructuresManager")
-const moment = require("moment")
 
 exports.run = async (client, message, args) => {
 
@@ -7,7 +6,7 @@ exports.run = async (client, message, args) => {
     let time = args.find(argument => argument.type === "Time")
     let reason = args.find(argument => argument.type === "Reason")
 
-    let isBanned = await message.guild.fetchBan(memberToBan.id).then(ban => { return true }).catch(any => { return false })
+    let isBanned = await message.guild.bans.fetch(memberToBan.id).then(ban => { return true }).catch(any => { return false })
     if (isBanned) return message.reply({ embed: BotError(client, "This user is banned.") })
 
     let canBan = await CheckHeirachy(message, memberToBan)
@@ -20,16 +19,23 @@ exports.run = async (client, message, args) => {
         }
     }
 
+    let timeOfBan = Date.now()
+    let query = "INSERT INTO guilds_cases(guild_id, user_id, moderator_id, type, reason, time_of_case) VALUES(?, ?, ?, ?, ?, ?);"
+    let params = [message.guild.id, memberToBan.id, message.author.id, "ban", reason ? `${reason.data}` : null, timeOfBan]
+
     if (time) {
-        let updateQuery = await DatabaseQuery("INSERT INTO guilds_bans(guild_id, user_id, reason, time_banned, time_unbanned) VALUES(?, ?, ?, ?, ?)", [message.guild.id, memberToBan.id, reason ? `${reason.data}` : null, time ? moment().valueOf() : null, time ? moment().valueOf() + time.data.milliseconds : null])
-        if (updateQuery.error) {
-            return message.reply({ embed: DatabaseError(client) })
-        }
+        query = query.concat("INSERT INTO guilds_tempbans(guild_id, user_id, time_to_unban) VALUES(?, ?, ?);")
+        params = params.concat([message.guild.id, memberToBan.id, timeOfBan + time.data.milliseconds])
+    }
+
+    let updateQuery = await DatabaseQuery(query, params)
+    if (updateQuery.error) {
+        return message.reply({ embed: DatabaseError(client) })
     }
 
     memberToBan.ban({ reason: reason ? `${reason.data}` : null })
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
+            return message.reply({ embed: BotSuccess(client, `${member} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` }) })
         })
         .catch(any => {
             return message.reply({ embed: BotError(client, `Something went wrong with banning this user.`) })
@@ -51,13 +57,13 @@ exports.info = {
         },
         {
             position: 1,
-            argument: "<time>",
+            argument: "<reason/time>",
             type: "Time",
             required: false
         },
         {
             position: 1,
-            argument: "<reason>",
+            argument: "<reason/time>",
             type: "Reason",
             required: false
         }

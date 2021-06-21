@@ -34,6 +34,11 @@ module.exports = async (info, message, args) => {
     for await ([index, argument] of args.entries()) {
 
         let commandArgument = arguments[index]
+        if (!commandArgument) {
+            // out of bounds, return
+            break;
+        }
+
         let type = commandArgument.type
 
         if (type === "SubCommand") {

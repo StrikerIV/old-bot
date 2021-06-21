@@ -16,9 +16,14 @@ exports.run = async (client, message, args) => {
         }
     }
 
+    let updateQuery = await DatabaseQuery(`INSERT INTO guilds_cases(guild_id, user_id, moderator_id, type, reason, time_of_case) VALUES(?, ?, ?, ?, ?, ?)`, [message.guild.id, memberToKick.id, message.author.id, 'kick', reason ? `${reason.data}` : null, Date.now()])
+    if (updateQuery.error) {
+        return message.reply({ embed: DatabaseError(client) })
+    }
+
     memberToKick.kick({ reason: reason ? `${reason.data}` : null })
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been kicked. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
+            return message.reply({ embed: BotSuccess(client, `${member} has been kicked. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` }) })
         })
         .catch(any => {
             return message.reply({ embed: BotError(client, `Something went wrong with kicking this user.`) })

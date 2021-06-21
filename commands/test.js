@@ -1,5 +1,5 @@
-const Discord = require("discord.js")
-const { PermissionError, FetchUserByName } = require("../structures/StructuresManager.js")
+const { } = require('discord.js');
+const { } = require("../structures/StructuresManager.js")
 
 exports.run = async (client, message, args) => {
 
@@ -15,6 +15,12 @@ exports.info = {
     arguments: [
         {
             position: 0,
+            argument: "<subcmd>",
+            type: "SubCommand",
+            required: true
+        },
+        {
+            position: 1,
             argument: "<subcmd>",
             type: "SubCommand",
             required: true

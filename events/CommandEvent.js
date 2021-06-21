@@ -14,10 +14,9 @@ exports.CommandEvent = async (client, message) => {
         return;
     }
 
-    let guildData = message.guild.data
-
+    let guildData = guilds.get(message.guild.id)
     if (!guildData) {
-        let data = await EvaluateGuildCache(message.guild)
+        let data = await EvaluateGuildCache(message.guild, false)
         message.guild.data = data
         return exports.CommandEvent(client, message)
     }
@@ -89,7 +88,7 @@ exports.CommandEvent = async (client, message) => {
 
     if (argumentCheck.error) {
         if (argumentCheck.type === "missingArgument") {
-            return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.type[0]}\` in position \`${argumentCheck.argument.position + 1}\`.`))
+            return message.reply(BotError(client, `Missing argument \`${argumentCheck.argument.argument}\` in position \`${argumentCheck.argument.position + 1}\`.`))
         }
     }
 

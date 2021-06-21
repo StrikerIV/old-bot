@@ -1,11 +1,9 @@
 const { DatabaseQuery } = require("../structures/StructuresManager")
-const config = require("../utils/config.json");
+const moment = require("moment")
 
 module.exports = async (client) => {
 
-    console.log("Updating banned individuals.")
-
-    let FetchBansQuery = await DatabaseQuery("SELECT * FROM guilds_bans WHERE time_unbanned <= ?", [moment().valueOf()])
+    let FetchBansQuery = await DatabaseQuery("SELECT * FROM guilds_tempbans WHERE time_to_unban <= ?", [Date.now()])
     if (FetchBansQuery.error) {
         return;
     }
@@ -25,7 +23,7 @@ module.exports = async (client) => {
             return;
         }
 
-        let banned = moment(ban.time_banned)
+        let banned = moment(ban.time_to_unban)
         let unbanned = moment()
 
         let durationOfMute = moment.duration(unbanned.diff(banned))
@@ -43,13 +41,13 @@ module.exports = async (client) => {
         let timeMuted = `${days ? `${days} ${daysFormatted},` : ""}${hours ? ` ${hours} ${hoursFormatted},` : ""}${minutes ? `${hours ? ` ${minutes} ${minutesFormatted},` : ` ${minutes} ${minutesFormatted}`}` : ""}${seconds ? ` ${minutes ? `and ${seconds} ${secondsFormatted}` : ` ${seconds} ${secondsFormatted}`}` : ""}`
 
         guild.members.unban(user_id, `Automatically unbanned after being banned for ${timeMuted}.`)
-            .then(async () => {
-                let updateQuery = await DatabaseQuery("DELETE FROM guilds_bans WHERE guild_id = ? AND user_id = ?", [guild.id, mutedUser.id])
-                if (updateQuery.error) {
-                    return;
-                }
-            })
-            .catch(any => { })
+            .then(async () => { })
+            .catch(async () => { })
+
+        let updateQuery = await DatabaseQuery("DELETE FROM guilds_tempbans WHERE guild_id = ? AND user_id = ?; UPDATE guilds_cases SET resolved = ? WHERE guild_id = ? AND user_id = ? AND time_of_case = ?", [guild_id, user_id, 1, guild_id, user_id, ban.time_to_unban])
+        if (updateQuery.error) {
+            return;
+        }
 
     }
 

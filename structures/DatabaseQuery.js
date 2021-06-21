@@ -44,29 +44,6 @@ module.exports = (query, parameters) => {
                 return result(ResultObject(true, null, null))
         }
 
-        if (parameters.includes(null) || QueryMethod === "INSERT") {
-            //when we supply 'null' in an INSERT, we want default values, therefor we need to remove those values
-            //start with params, find the null index, remove it
-
-            let splitQuery = query.split("(")
-            splitQuery = splitQuery[1].split(")")[0].split(",")
-
-            let table = query.split(" ")[2].split("(")[0]
-            let amountofNulls = parameters.filter(param => param === null).length
-
-            for (x = 0; x < amountofNulls; x++) {
-
-                let indexOfNull = parameters.findIndex(param => param === null)
-
-                splitQuery.splice(indexOfNull, 1)
-                parameters.splice(indexOfNull, 1)
-
-            }
-
-            query = `INSERT INTO ${table}(${splitQuery.slice(0, parameters.length)}) VALUES(${"?, ".repeat(parameters.length - 1) + "?"})`
-        }
-
-
         const params = new URLSearchParams({
             'query': query,
         })

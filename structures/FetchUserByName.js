@@ -10,6 +10,8 @@ const { DiscordAPIError } = require('discord.js');
  */
 module.exports = async (message, search) => {
 
+    // unused 
+
     if (Math.round((message.guild.members.cache.array().length / message.guild.memberCount) * 1000) / 1000 <= .50) {
         //fetch all guild members and cache if there are less than 50% of members cached
         await message.guild.members.fetch()
