@@ -7,15 +7,15 @@ exports.run = async (client, message, args) => {
     let reason = args.find(argument => argument.type === "Reason")
 
     let isBanned = await message.guild.bans.fetch(memberToBan.id).then(ban => { return true }).catch(any => { return false })
-    if (isBanned) return message.reply({ embed: BotError(client, "This user is banned.") })
+    if (isBanned) return message.reply({ embeds: [BotError(client, "This user is banned.")] })
 
     let canBan = await CheckHeirachy(message, memberToBan)
 
     if (!canBan.above) {
         if (canBan.type === "bot") {
-            return message.reply({ embed: BotError(client, `The bot cannot ban this user. Check the heirachy positions.`) })
+            return message.reply({ embeds: [BotError(client, `The bot cannot ban this user. Check the heirachy positions.`)] })
         } else {
-            return message.reply({ embed: BotError(client, `You cannot ban this user, as they are above you in the heirachy.`) })
+            return message.reply({ embeds: [BotError(client, `You cannot ban this user, as they are above you in the heirachy.`)] })
         }
     }
 
@@ -30,15 +30,15 @@ exports.run = async (client, message, args) => {
 
     let updateQuery = await DatabaseQuery(query, params)
     if (updateQuery.error) {
-        return message.reply({ embed: DatabaseError(client) })
+        return message.reply({ embeds: [DatabaseError(client)] })
     }
 
     memberToBan.ban({ reason: reason ? `${reason.data}` : null })
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` }) })
+            return message.reply({ embeds: [BotSuccess(client, `${member} has been banned${time ? ` for ${time.data.time} ${time.data.units}.` : `.`} ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` })] })
         })
         .catch(any => {
-            return message.reply({ embed: BotError(client, `Something went wrong with banning this user.`) })
+            return message.reply({ embeds: [BotError(client, `Something went wrong with banning this user.`)] })
         })
 
 }
@@ -75,5 +75,6 @@ exports.info = {
     aliases: null,
     usageAreas: ["text"],
     developer: false,
+    beta: false,
     cooldown: 5,
 }

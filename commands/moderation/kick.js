@@ -10,23 +10,23 @@ exports.run = async (client, message, args) => {
 
     if (!canKick.above) {
         if (canKick.type === "bot") {
-            return message.reply({ embed: BotError(client, `The bot cannot kick this user. Check the heirachy positions.`) })
+            return message.reply({ embeds: [BotError(client, `The bot cannot kick this user. Check the heirachy positions.`)] })
         } else {
-            return message.reply({ embed: BotError(client, `You cannot kick this user, as they are above you in the heirachy.`) })
+            return message.reply({ embeds: [BotError(client, `You cannot kick this user, as they are above you in the heirachy.`)] })
         }
     }
 
     let updateQuery = await DatabaseQuery(`INSERT INTO guilds_cases(guild_id, user_id, moderator_id, type, reason, time_of_case) VALUES(?, ?, ?, ?, ?, ?)`, [message.guild.id, memberToKick.id, message.author.id, 'kick', reason ? `${reason.data}` : null, Date.now()])
     if (updateQuery.error) {
-        return message.reply({ embed: DatabaseError(client) })
+        return message.reply({ embeds: [DatabaseError(client)] })
     }
 
     memberToKick.kick({ reason: reason ? `${reason.data}` : null })
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been kicked. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` }) })
+            return message.reply({ embeds: [BotSuccess(client, `${member} has been kicked. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`, { footer: `Case #: ${updateQuery.data.insertId}` })] })
         })
         .catch(any => {
-            return message.reply({ embed: BotError(client, `Something went wrong with kicking this user.`) })
+            return message.reply({ embeds: [BotError(client, `Something went wrong with kicking this user.`)] })
         })
 
 }
@@ -57,5 +57,6 @@ exports.info = {
     aliases: null,
     usageAreas: ["text"],
     developer: false,
+    beta: false,
     cooldown: 5,
 }

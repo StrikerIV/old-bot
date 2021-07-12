@@ -37,6 +37,11 @@ exports.CommandEvent = async (client, message) => {
 
     const info = command.info;
 
+    if (info.beta) {
+        // command is beta only, allow only beta / dev servers
+        if (!config.developerServers.includes(message.guild.id)) return;
+    }
+
     if (info.cooldown) {
         //eval cooldowns
         if (!cooldowns.has(info.command)) {
@@ -51,7 +56,7 @@ exports.CommandEvent = async (client, message) => {
             const expirationTime = commandCooldowns.get(message.author.id) + cooldownTime;
             if (now < expirationTime) {
                 const timeLeft = Math.floor((expirationTime - now) / 1000);
-                return message.reply({ embed: BotError(client, `This command is on cooldown for \`${timeLeft}\` more ${timeLeft != 0 && timeLeft <= 1 ? "second" : "seconds"}.`) });
+                return message.reply({ embeds: [BotError(client, `This command is on cooldown for \`${timeLeft}\` more ${timeLeft != 0 && timeLeft <= 1 ? "second" : "seconds"}.`)] });
             }
         }
 
@@ -62,13 +67,13 @@ exports.CommandEvent = async (client, message) => {
 
     let commandEnabled = await EnabledCheck(guildData, message, command)
     if (!commandEnabled) {
-        return message.reply({ embed: BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`), allowedMentions: { repliedUser: false } })
+        return message.reply({ embeds: [BotError(client, `The \`${command.info.category}\` category of commands are not enabled.`)], allowedMentions: { repliedUser: false } })
     }
 
     if (info.usageAreas) {
         let channelType = message.channel.type
         if (!info.usageAreas.includes(channelType)) {
-            return message.reply({ embed: BotError(client, `This command cannot be run in ${channelType} type channels.`), allowedMentions: { repliedUser: false } })
+            return message.reply({ embeds: [BotError(client, `This command cannot be run in ${channelType} type channels.`)], allowedMentions: { repliedUser: false } })
         }
     }
 
@@ -77,13 +82,13 @@ exports.CommandEvent = async (client, message) => {
         let permissionObject = await PermissionCheck(message, info.permissions[0], info.permissions[1]);
 
         if (permissionObject.error) {
-            return message.reply({ embed: PermissionError(client, permissionObject.permission, permissionObject.bot), allowedMentions: { repliedUser: false } })
+            return message.reply({ embeds: [PermissionError(client, permissionObject.permission, permissionObject.bot)], allowedMentions: { repliedUser: false } })
         }
     }
 
     let argumentCheck = await ArgumentCheck(info, args)
     if (argumentCheck === "HelpEmbed") {
-        return message.reply(HelpEmbed(message, info))
+        return message.reply({ embeds: [HelpEmbed(message, info)] })
     }
 
     if (argumentCheck.error) {
@@ -96,11 +101,11 @@ exports.CommandEvent = async (client, message) => {
     let arguments = await ParseArguments(info, message, args)
     if (arguments.error) {
         if (arguments.type === "User") {
-            return message.reply({ embed: BotError(message.client, `The supplied \`User\` is \`invalid\`.`) })
+            return message.reply({ embeds: [BotError(message.client, `The supplied \`User\` is \`invalid\`.`)] })
         } if (arguments.type === "GuildMember") {
-            return message.reply({ embed: BotError(message.client, `The supplied \`GuildMember\` is \`invalid\`.`) })
+            return message.reply({ embeds: [BotError(message.client, `The supplied \`GuildMember\` is \`invalid\`.`)] })
         } else if (arguments.type === "Time") {
-            return message.reply({ embed: BotError(message.client, `\`Time\` was supplied, but no units were.`) })
+            return message.reply({ embeds: [BotError(message.client, `\`Time\` was supplied, but no units were.`)] })
         }
     }
 

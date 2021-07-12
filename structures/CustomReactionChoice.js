@@ -22,7 +22,7 @@ module.exports = async (message, question, choices) => {
         .setDescription(question)
         .addField('\u200B', choicesFieldText, true)
 
-    let questionMessage = await message.reply({ embed: questionEmbed })
+    let questionMessage = await message.reply({ embeds: [questionEmbed] })
 
     // apply reactions
     for await (let choice of choices) {

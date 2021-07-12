@@ -10,11 +10,11 @@ exports.run = async (client, message, args) => {
     let mutedRole = guildData.muted_role_id ? await message.guild.roles.fetch(guildData.muted_role_id) : null;
 
     if (!mutedRole || mutedRole.deleted) {
-        return message.reply({ embed: BotError(client, `There is no \`MUTED\` role, therefor no one is muted.`) })
+        return message.reply({ embeds: [BotError(client, `There is no \`MUTED\` role, therefor no one is muted.`)] })
     }
 
     if (!userToUnmute.roles.cache.has(mutedRole.id)) {
-        return message.reply({ embed: BotError(client, `This user is not muted.`) })
+        return message.reply({ embeds: [BotError(client, `This user is not muted.`)] })
     }
 
     // if role is different than the one in database, we update
@@ -28,10 +28,10 @@ exports.run = async (client, message, args) => {
     // user is muted, remove role from them
     userToUnmute.roles.remove(mutedRole, "Unmuted.")
         .then((member) => {
-            return message.reply({ embed: BotSuccess(client, `${member} has been unmuted. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`) })
+            return message.reply({ embeds: [BotSuccess(client, `${member} has been unmuted. ${reason ? `\n\nReason: \`${reason.data}\`` : ``}`)] })
         })
         .catch(any => {
-            return message.reply({ embed: BotError(client, `Something went wrong with unmuting this user.`) })
+            return message.reply({ embeds: [BotError(client, `Something went wrong with unmuting this user.`)] })
         })
 
 }
@@ -62,5 +62,6 @@ exports.info = {
     aliases: null,
     usageAreas: ["text"],
     developer: false,
+    beta: false,
     cooldown: 5,
 }

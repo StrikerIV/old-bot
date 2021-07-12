@@ -37,9 +37,9 @@ exports.Message = async (message) => {
             .setColor('BLUE')
             .setTitle("Information")
             .setFooter("Information")
-            .setDescription(`Hey! Here's some basic information about me.\n\nYou can change any value here using the \`settings\` command.\n\n**Prefix**\nThe current prefix for your server is : \`${guildData.data[0].prefix}\`\n`)
+            .setDescription(`Hey! Here's some basic information about me.\n\nYou can change any value here using the \`settings\` command.\n\n**Prefix**\nThe current prefix for your server is : \`${guildData.prefix}\`\n`)
 
-        return message.reply({ embed: informationEmbed })
+        return message.reply({ embeds: [informationEmbed] })
     }
 
     // //test to see if valid discord attachment
@@ -63,7 +63,7 @@ exports.Message = async (message) => {
     //     if ((nsfwData.unsafe * 100) >= 55) {
     //         //deemed unsafe, delete
     //         return message.delete()
-    //             .then(msg => msg.channel.send({ embed: BotOngoing(`Woah there ${msg.author}! We think this has NSFW content; we've removed it to be safe.`, { color: "RED" }) }))
+    //             .then(msg => msg.channel.send({ embeds: [BotOngoing(`Woah there ${msg.author}! We think this has NSFW content; we've removed it to be safe.`, { color: "RED" })] }))
     //     }
     // }
 
