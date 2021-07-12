@@ -10,11 +10,11 @@ exports.run = async (client, message, args) => {
     message.guild.members.unban(userToUnban.id, [reasonForUnban ? reasonForUnban : null])
         .then((user) => {
             return message.reply({
-                embed: BotSuccess(client, `${user} has been unbanned.`)
+                embeds: [BotSuccess(client, `${user} has been unbanned.`)]
             })
         })
         .catch(any => {
-            return message.reply({ embed: BotError(client, `This user is not banned.`) })
+            return message.reply({ embeds: [BotError(client, `This user is not banned.`)] })
         })
 
 }
@@ -45,5 +45,6 @@ exports.info = {
     aliases: null,
     usageAreas: ["text"],
     developer: false,
+    beta: false,
     cooldown: 5,
 }

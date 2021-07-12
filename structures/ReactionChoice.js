@@ -13,7 +13,7 @@ module.exports = async (message, question) => {
         .setColor("BLUE")
         .setDescription(question)
 
-    let questionMessage = await message.reply({ embed: questionEmbed })
+    let questionMessage = await message.reply({ embeds: [questionEmbed] })
 
     await questionMessage.react(message.client.krytcheck)
     await questionMessage.react(message.client.krytx)

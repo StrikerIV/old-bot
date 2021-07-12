@@ -24,7 +24,7 @@
     "@tensorflow/tfjs": "^3.7.0",
     "@tensorflow/tfjs-node": "^3.7.0",
     "axios": "^0.21.1",
-    "discord.js": "^13.0.0-dev.c850ae10270076c4b2e10b130dd8f88eed4ed201",
+    "discord.js": "^13.0.0-dev.ca2a36b1d713a743045b15adf99eda69a6fdbec7",
     "moment": "^2.29.1",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.1",
