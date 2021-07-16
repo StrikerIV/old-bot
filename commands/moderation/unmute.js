@@ -7,10 +7,14 @@ exports.run = async (client, message, args) => {
     let reason = args.find(argument => argument.type === "Reason")
 
     let guildData = message.guild.data
-    let mutedRole = guildData.muted_role_id ? await message.guild.roles.fetch(guildData.muted_role_id) : null;
+    let mutedRoleId = guildData.muted_role_id;
+    let mutedRole = await message.guild.roles.resolve(mutedRoleId)
 
-    if (!mutedRole || mutedRole.deleted) {
-        return message.reply({ embeds: [BotError(client, `There is no \`MUTED\` role, therefor no one is muted.`)] })
+    if (!mutedRole) {
+        mutedRole = message.guild.roles.cache.find(role => role.name === "Muted")
+        if (!mutedRole) {
+            return message.reply({ embeds: [BotError(client, "There is no \`Muted\` role, therefor no one is muted.")] })
+        }
     }
 
     if (!userToUnmute.roles.cache.has(mutedRole.id)) {

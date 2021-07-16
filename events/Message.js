@@ -30,7 +30,7 @@ exports.Message = async (message) => {
     }
 
     //check to see if bot was pinged to return basic information on the bot
-    if (message.mentions.has(message.guild.me)) {
+    if (message.mentions.has(message.guild.me) && !message.mentions.everyone) {
 
         let informationEmbed = new Discord.MessageEmbed()
             .setTimestamp()
