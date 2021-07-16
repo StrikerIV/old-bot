@@ -14,18 +14,18 @@ exports.run = async (client, message, args) => {
             .then(async (channel) => {
                 await channel.clone("Remaking channel to purge messages.")
                     .then(channel => {
-                        return channel.send({ embed: BotSuccess(client, `${message.author},\nI successfully purged \`all\` messages from this channel.`) })
+                        return channel.send({ embeds: [BotSuccess(client, `${message.author},\nI successfully purged \`all\` messages from this channel.`)] })
                     })
                     .catch(any => {
                         if (!guild.systemChannel) {
                             return;
                         }
 
-                        return guild.systemChannel.reply({ embed: BotError(client, `Failed to purge messages from this channel.`) })
+                        return guild.systemChannel.reply({ embeds: [BotError(client, `Failed to purge messages from this channel.`)] })
                     })
             })
             .catch(any => {
-                return message.reply({ embed: BotError(client, `Failed to purge messages from this channel.`) })
+                return message.reply({ embeds: [BotError(client, `Failed to purge messages from this channel.`)] })
             })
     } else if (!Number.isInteger(amountToDelete)) {
         //recursevly call until all are deleted
@@ -39,7 +39,7 @@ exports.run = async (client, message, args) => {
                 await message.channel.bulkDelete(100, true)
                     .then(messages => amountDeleted += messages.size)
                     .catch(any => {
-                        return message.reply({ embed: BotError(client, `Failed to purge messages from this channel.`) })
+                        return message.reply({ embeds: [BotError(client, `Failed to purge messages from this channel.`)] })
                     })
                 amountToDelete -= 100
             } else {
@@ -47,16 +47,16 @@ exports.run = async (client, message, args) => {
                 await message.channel.bulkDelete(amountToDelete, true)
                     .then(messages => amountDeleted += messages.size)
                     .catch(any => {
-                        return message.reply({ embed: BotError(client, `Failed to purge messages from this channel.`) })
+                        return message.reply({ embeds: [BotError(client, `Failed to purge messages from this channel.`)] })
                     })
                 amountToDelete -= amountToDelete
             }
 
         }
 
-        return message.channel.send({ embed: BotSuccess(client, `${message.author},\nI successfully purged \`${amountDeleted}\` ${amountDeleted <= 1 ? "message" : "messages"} from this channel.`) })
+        return message.channel.send({ embeds: [BotSuccess(client, `${message.author},\nI successfully purged \`${amountDeleted}\` ${amountDeleted <= 1 ? "message" : "messages"} from this channel.`)] })
     } else {
-        return message.reply({ embed: BotError(client, `Supply a number of messages to purge.`) })
+        return message.reply({ embeds: [BotError(client, `Supply a number of messages to purge.`)] })
     }
 
 }
@@ -81,5 +81,6 @@ exports.info = {
     aliases: null,
     usageAreas: ["text"],
     developer: false,
+    beta: false,
     cooldown: 5,
 }
